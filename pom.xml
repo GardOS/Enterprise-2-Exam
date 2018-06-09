@@ -31,7 +31,7 @@
         <spring-cloud.version>Edgware.SR3</spring-cloud.version>
         <rest-assured.version>3.0.1</rest-assured.version>
         <springfox.version>2.6.1</springfox.version>
-        <testcontainers.version>1.6.0</testcontainers.version>
+        <testcontainers.version>1.7.2</testcontainers.version>
         <wiremock.version>2.2.1</wiremock.version>
         <awaitility.version>3.0.0</awaitility.version>
     </properties>

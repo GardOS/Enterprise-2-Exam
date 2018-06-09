@@ -33,17 +33,6 @@ services:
       - "8761:8761"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
-  game-server:
-    build:
-      context: game
-      dockerfile: Dockerfile
-    depends_on:
-      - gateway
-      - postgres-game
-      - redis
-      - rabbitmq
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
   producer-server: #FIXME
     build:
       context: producer #FIXME
@@ -54,6 +43,7 @@ services:
       - gateway
       - postgres-producer #FIXME
       - redis
+      - rabbitmq
   consumer-server: #FIXME
     build:
       context: consumer #FIXME

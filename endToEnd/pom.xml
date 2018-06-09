@@ -39,12 +39,11 @@
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
+        <!--Test-->
         <dependency>
             <groupId>org.awaitility</groupId>
             <artifactId>awaitility</artifactId>
         </dependency>
-
-        <!--Test-->
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
