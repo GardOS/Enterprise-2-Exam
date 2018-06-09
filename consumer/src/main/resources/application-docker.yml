@@ -1,0 +1,33 @@
+producerServerPath: http://producer-server/producer
+
+spring:
+  application:
+    name: consumer-server #FIXME
+  datasource:
+    url: "jdbc:postgresql://postgres-consumer:5432/postgres" #FIXME
+    username: "postgres"
+    password: ""
+    driver-class-name: "org.postgresql.Driver"
+  jpa:
+    database: "postgresql"
+    hibernate:
+      ddl-auto: "update"
+  rabbitmq:
+    host: rabbitmq
+  session:
+    store-type: redis
+  redis:
+    host: redis
+    port: 6379
+
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    healthcheck:
+      enabled: true
+    serviceUrl:
+      defaultZone: http://eureka:8761/eureka/
+
+security:
+  sessions: NEVER

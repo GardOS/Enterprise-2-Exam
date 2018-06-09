@@ -1,0 +1,67 @@
+version: '3.3'
+
+services:
+  #Data storage
+  redis:
+    image: "redis:latest"
+  postgres-producer: #FIXME
+    image: "postgres:10"
+  postgres-consumer: #FIXME
+    image: "postgres:10"
+
+  #Message queue
+  rabbitmq:
+    image:  "rabbitmq:3"
+
+  #Custom service
+  gateway:
+    build:
+      context: gateway
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - eureka
+      - redis
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+  eureka:
+    build:
+      context: eureka
+      dockerfile: Dockerfile
+    ports:
+      - "8761:8761"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+  game-server:
+    build:
+      context: game
+      dockerfile: Dockerfile
+    depends_on:
+      - gateway
+      - postgres-game
+      - redis
+      - rabbitmq
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+  producer-server: #FIXME
+    build:
+      context: producer #FIXME
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - gateway
+      - postgres-producer #FIXME
+      - redis
+  consumer-server: #FIXME
+    build:
+      context: consumer #FIXME
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - gateway
+      - postgres-consumer #FIXME
+      - redis
+      - rabbitmq
