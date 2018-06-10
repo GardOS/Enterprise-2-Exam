@@ -7,7 +7,6 @@ import io.restassured.http.ContentType
 import org.awaitility.Awaitility.await
 import org.awaitility.Duration
 import org.hamcrest.CoreMatchers.equalTo
-import org.junit.Assert.assertTrue
 import org.junit.BeforeClass
 import org.junit.ClassRule
 import org.junit.Test
@@ -34,8 +33,8 @@ class GameFlowIT {
 					.pollInterval(Duration.FIVE_SECONDS)
 					.ignoreExceptions()
 					.until({
-						// zuul and eureka is up when 200 is returned
-						// this will in itself act as a test proving both zuul and eureka works
+						//Ensure that everything is up and running before testing
+						//This will in itself act as a test for Gateway and Eureka
 						given().get("http://localhost/producer-server/health").then().body("status", equalTo("UP"))
 						given().get("http://localhost/consumer-server/health").then().body("status", equalTo("UP"))
 						// need to make sure the data is created before running this tests
@@ -50,7 +49,7 @@ class GameFlowIT {
 			val token = given().contentType(ContentType.URLENC)
 					.formParam("username", "username")
 					.formParam("password", "password")
-					.post("/signIn")
+					.post("/register")
 					.then()
 					.statusCode(403)
 					.extract().cookie("XSRF-TOKEN")
@@ -60,7 +59,7 @@ class GameFlowIT {
 					.formParam("password", "password")
 					.header("X-XSRF-TOKEN", token)
 					.cookie("XSRF-TOKEN", token)
-					.post("/signIn")
+					.post("/register")
 					.then()
 					.statusCode(204)
 					.extract().cookie("SESSION")
@@ -70,13 +69,43 @@ class GameFlowIT {
 					.setContentType(ContentType.JSON)
 					.addHeader("X-XSRF-TOKEN", token)
 					.addCookie("XSRF-TOKEN", token)
-					.addCookie("SESSION", Pair(session, token).first)
+					.addCookie("SESSION", session)
 					.build()
 		}
 	}
 
 	@Test
-	fun completeGame() {
-		assertTrue(true)
+	fun authenticationTest() {
+		RestAssured.get("/user")
+				.then()
+				.statusCode(200)
+
+		RestAssured.get("/logout")
+				.then()
+				.statusCode(204)
+
+		RestAssured.get("/user")
+				.then()
+				.statusCode(401)
+
+		val newSession = given().contentType(ContentType.URLENC)
+				.formParam("username", "username")
+				.formParam("password", "password")
+				.post("/login")
+				.then()
+				.statusCode(204)
+				.extract().cookie("SESSION")
+
+		RestAssured.requestSpecification = RequestSpecBuilder()
+				.setAccept(ContentType.JSON)
+				.setContentType(ContentType.JSON)
+				.addCookie("SESSION", newSession)
+				.build()
+
+		RestAssured.given()
+				.get("/user")
+				.then()
+				.statusCode(200)
+
 	}
 }
