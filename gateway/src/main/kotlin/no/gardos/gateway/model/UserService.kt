@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class UserService(
 		@Autowired
-		private val userCrud: UserRepository,
+		private val userRepo: UserRepository,
 		@Autowired
 		private val passwordEncoder: PasswordEncoder
 ) {
@@ -17,14 +17,26 @@ class UserService(
 		try {
 			val hashedPassword = passwordEncoder.encode(password)
 
-			if (userCrud.exists(username)) return false
+			if (userRepo.exists(username)) return false
 
 			val user = User(username, hashedPassword, roles.map { "ROLE_$it" }.toSet())
-			userCrud.save(user)
+			userRepo.save(user)
 
 			return true
 		} catch (e: Exception) {
 			return false
+		}
+	}
+
+	fun getUser(username: String, password: String): User? {
+		try {
+			val user = userRepo.findOne(username)
+			if (!passwordEncoder.matches(password, user.password)) {
+				return null
+			}
+			return user
+		} catch (e: Exception) {
+			return null
 		}
 	}
 }

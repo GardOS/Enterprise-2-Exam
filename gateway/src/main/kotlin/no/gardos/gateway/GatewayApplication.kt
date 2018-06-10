@@ -3,6 +3,7 @@ package no.gardos.gateway
 import com.netflix.config.ConfigurationManager
 import no.gardos.gateway.model.User
 import no.gardos.gateway.model.UserRepository
+import no.gardos.gateway.model.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.SpringApplication
@@ -49,9 +50,14 @@ internal class CommandLineAppStartupRunner : CommandLineRunner {
 	var userRepository: UserRepository? = null
 	@Autowired
 	var passwordEncoder: PasswordEncoder? = null
+	@Autowired
+	var userService: UserService? = null
 
 	override fun run(vararg args: String) {
+		val username = "admin"
+		val password = passwordEncoder!!.encode("pwd")
 		val roles = hashSetOf("ROLE_USER", "ROLE_ADMIN", "ROLE_ACTUATOR")
-		userRepository!!.save(User("admin", passwordEncoder!!.encode("pwd"), roles))
+		userService?.createUser(username, password, roles)
+		userRepository!!.save(User(username, password, roles))
 	}
 }

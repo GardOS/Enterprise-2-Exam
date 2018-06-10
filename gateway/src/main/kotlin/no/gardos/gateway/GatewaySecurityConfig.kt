@@ -15,7 +15,7 @@ import javax.sql.DataSource
 
 @Configuration
 @EnableWebSecurity
-class WebSecurityConfig(
+class GatewaySecurityConfig(
 		private val dataSource: DataSource,
 		private val passwordEncoder: PasswordEncoder
 ) : WebSecurityConfigurerAdapter() {
@@ -37,7 +37,9 @@ class WebSecurityConfig(
 				.antMatchers("/health").permitAll()
 				.antMatchers("/trace").authenticated()
 				//Auth
-				.antMatchers("/signIn").permitAll()
+				.antMatchers("/login").permitAll()
+				.antMatchers("/logout").permitAll()
+				.antMatchers("/register").permitAll()
 				.antMatchers("/user").authenticated()
 				//Producer
 				.antMatchers(HttpMethod.GET, "/producer-server/**").permitAll() //FIXME
