@@ -1,4 +1,4 @@
-package no.gardos.producer
+package no.gardos.consumer
 
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -8,7 +8,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 
 @Configuration
 @EnableWebSecurity
-class WebSecurityConfig : WebSecurityConfigurerAdapter() {
+class ConsumerSecurityConfig : WebSecurityConfigurerAdapter() {
 
 	override fun configure(http: HttpSecurity) {
 		http.httpBasic()

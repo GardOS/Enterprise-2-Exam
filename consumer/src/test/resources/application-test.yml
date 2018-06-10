@@ -1,0 +1,15 @@
+producerServerPath: http://localhost:8099/producer #FIXME
+
+spring:
+  session:
+    store-type: hash_map
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.session.SessionAutoConfiguration
+
+security:
+  basic:
+    enabled: false
+
+eureka:
+  client:
+    enabled: false
