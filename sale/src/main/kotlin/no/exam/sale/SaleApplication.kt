@@ -8,8 +8,8 @@ import org.springframework.cloud.netflix.ribbon.RibbonClient
 @SpringBootApplication
 @EnableEurekaClient
 @RibbonClient(name = "book-server") //FIXME
-class ConsumerApplication
+class SaleApplication
 
 fun main(args: Array<String>) {
-	SpringApplication.run(ConsumerApplication::class.java, *args)
+	SpringApplication.run(SaleApplication::class.java, *args)
 }
