@@ -40,7 +40,7 @@ class GatewaySecurityConfig(
 				.antMatchers("/login").permitAll()
 				.antMatchers("/logout").permitAll()
 				.antMatchers("/register").permitAll()
-				.antMatchers("/user").authenticated()
+				.antMatchers("/authUser").authenticated()
 				//Book
 				.antMatchers(HttpMethod.GET, "/book-server/**").permitAll()
 				.antMatchers("/book-server/**").authenticated()

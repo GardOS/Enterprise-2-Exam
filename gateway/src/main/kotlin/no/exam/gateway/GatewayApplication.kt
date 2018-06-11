@@ -4,6 +4,7 @@ import com.netflix.config.ConfigurationManager
 import no.exam.gateway.model.AuthUser
 import no.exam.gateway.model.AuthUserRepository
 import no.exam.gateway.model.AuthUserService
+import org.springframework.amqp.core.FanoutExchange
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.SpringApplication
@@ -37,6 +38,11 @@ class GatewayApplication {
 	@Bean
 	fun passwordEncoder(): PasswordEncoder {
 		return BCryptPasswordEncoder()
+	}
+
+	@Bean
+	fun fanout(): FanoutExchange {
+		return FanoutExchange("new-user")
 	}
 }
 
