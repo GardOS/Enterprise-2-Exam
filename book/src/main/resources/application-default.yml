@@ -1,5 +1,5 @@
 server:
-  port: 8082
+  port: 8081
 
 spring:
   application:
@@ -12,7 +12,10 @@ spring:
     hibernate:
       ddl-auto: "create-drop"
   session:
-    store-type: hash_map #TODO: Investigate if this breaks auth
+    store-type: redis
+  redis:
+    host: localhost
+    port: 6379
 
 eureka:
   instance:
