@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: book-server
+  datasource:
+    url: "jdbc:postgresql://postgres-book:5432/postgres"
+    username: "postgres"
+    password: ""
+    driver-class-name: "org.postgresql.Driver"
+  jpa:
+    database: "postgresql"
+    hibernate:
+      ddl-auto: "update"
+  session:
+    store-type: redis
+  redis:
+    host: redis
+    port: 6379
+
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    healthcheck:
+      enabled: true
+    serviceUrl:
+      defaultZone: http://eureka:8761/eureka/
+
+security:
+  sessions: NEVER

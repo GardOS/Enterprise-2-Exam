@@ -13,6 +13,7 @@
         <module>eureka</module>
         <module>gateway</module>
         <module>endToEnd</module>
+        <module>book</module>
     </modules>
     <packaging>pom</packaging>
 
