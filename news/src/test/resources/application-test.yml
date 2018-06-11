@@ -1,0 +1,11 @@
+spring:
+  session:
+    store-type: none
+
+eureka:
+  client:
+    enabled: false
+
+#logging:
+#  level:
+#    org.apache.http: debug #For printing http messages

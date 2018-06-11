@@ -15,10 +15,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.TransactionSystemException
 import org.springframework.validation.annotation.Validated
-import org.springframework.web.bind.annotation.ExceptionHandler
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import javax.servlet.http.HttpServletResponse
 import org.hibernate.exception.ConstraintViolationException as HibernateConstraintViolationException
 import javax.validation.ConstraintViolationException as JavaxConstraintViolationException
@@ -51,10 +48,18 @@ class NewsController {
 	}
 
 	//GET ALL
-	@ApiOperation("Get all the news")
+	@ApiOperation("Get all the news. If \"getLatest\" param is true them the last ten news is returned")
 	@GetMapping
-	fun getAllNews(): ResponseEntity<List<NewsDto>> {
-		return ResponseEntity.ok(NewsConverter.transform(newsRepo.findAll()))
+	fun getAllNews(
+			@RequestParam("getLatest", required = false, defaultValue = "false")
+			getLatest: Boolean
+	): ResponseEntity<List<NewsDto>> {
+		val news = newsRepo.findAll()
+
+		if (getLatest)
+			return ResponseEntity.ok(NewsConverter.transform(news.toList().takeLast(10).asReversed()))
+
+		return ResponseEntity.ok(NewsConverter.transform(news))
 	}
 
 	//Catches validation errors and returns error status based on error
