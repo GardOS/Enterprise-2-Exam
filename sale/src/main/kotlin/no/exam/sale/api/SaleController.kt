@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiParam
 import no.exam.sale.model.Sale
 import no.exam.sale.model.SaleConverter
 import no.exam.sale.model.SaleRepository
-import no.exam.schema.ProducerDto
+import no.exam.schema.BookDto
 import no.exam.schema.SaleDto
 import org.springframework.amqp.core.FanoutExchange
 import org.springframework.amqp.rabbit.core.RabbitTemplate
@@ -187,7 +187,7 @@ class SaleController {
 	fun sendMessage(
 			@ApiParam("Sale dto. Should not specify id")
 			@RequestBody
-			dto: ProducerDto,
+			dto: BookDto,
 			session: HttpSession
 	): ResponseEntity<Any> {
 		//Id is auto-generated and should not be specified
@@ -198,11 +198,11 @@ class SaleController {
 		val url = bookServerPath
 		val headers = HttpHeaders()
 		headers.add("cookie", "SESSION=${session.id}")
-		val httpEntity = HttpEntity(ProducerDto(name = dto.name), headers)
+		val httpEntity = HttpEntity(BookDto(), headers)
 
 		val status: HttpStatus
 		try {
-			status = restTemplate.exchange(url, HttpMethod.POST, httpEntity, ProducerDto::class.java).statusCode
+			status = restTemplate.exchange(url, HttpMethod.POST, httpEntity, BookDto::class.java).statusCode
 		} catch (ex: HttpClientErrorException) {
 			return ResponseEntity.status(ex.statusCode).body("Error when querying Producer:\n" +
 					"$ex.responseBodyAsString")
