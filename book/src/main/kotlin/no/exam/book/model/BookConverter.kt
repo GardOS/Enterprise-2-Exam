@@ -13,8 +13,8 @@ class BookConverter {
 			)
 		}
 
-		fun transform(categories: Iterable<Book>): List<BookDto> {
-			return categories.map { transform(it) }
+		fun transform(books: Iterable<Book>): List<BookDto> {
+			return books.map { transform(it) }
 		}
 	}
 }

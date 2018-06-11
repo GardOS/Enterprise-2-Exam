@@ -13,8 +13,8 @@ class SaleConverter {
 			)
 		}
 
-		fun transform(categories: Iterable<Sale>): List<SaleDto> {
-			return categories.map { transform(it) }
+		fun transform(sales: Iterable<Sale>): List<SaleDto> {
+			return sales.map { transform(it) }
 		}
 	}
 }

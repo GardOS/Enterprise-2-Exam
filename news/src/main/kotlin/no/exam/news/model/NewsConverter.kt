@@ -14,8 +14,8 @@ class NewsConverter {
 			)
 		}
 
-		fun transform(categories: Iterable<News>): List<NewsDto> {
-			return categories.map { transform(it) }
+		fun transform(news: Iterable<News>): List<NewsDto> {
+			return news.map { transform(it) }
 		}
 	}
 }
