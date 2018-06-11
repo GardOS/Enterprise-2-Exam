@@ -41,12 +41,18 @@ class GatewaySecurityConfig(
 				.antMatchers("/logout").permitAll()
 				.antMatchers("/register").permitAll()
 				.antMatchers("/user").authenticated()
-				//Producer
-				.antMatchers(HttpMethod.GET, "/producer-server/**").permitAll() //FIXME
-				.antMatchers("/producer-server/**").authenticated() //FIXME
-				//Consumer
-				.antMatchers(HttpMethod.GET, "/consumer-server/**").permitAll() //FIXME
-				.antMatchers("/consumer-server/**").authenticated() //FIXME
+				//Book
+				.antMatchers(HttpMethod.GET, "/book-server/**").permitAll()
+				.antMatchers("/book-server/**").authenticated()
+				//Sale
+				.antMatchers(HttpMethod.GET, "/sale-server/**").permitAll()
+				.antMatchers("/sale-server/**").authenticated()
+				//User
+				.antMatchers(HttpMethod.GET, "/user-server/**").permitAll()
+				.antMatchers("/user-server/**").authenticated()
+				//News
+				.antMatchers(HttpMethod.GET, "/news-server/**").permitAll()
+				.antMatchers("/news-server/**").authenticated()
 				.anyRequest().denyAll()
 				.and()
 				.csrf()

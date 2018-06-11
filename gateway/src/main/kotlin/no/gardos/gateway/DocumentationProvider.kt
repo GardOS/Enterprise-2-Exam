@@ -15,8 +15,10 @@ class DocumentationProvider : SwaggerResourcesProvider {
 
 	override fun get(): List<SwaggerResource> {
 		val resources = ArrayList<SwaggerResource>()
-		resources.add(swaggerResource("producer-server", "/producer-server/v2/api-docs", "2.0")) //FIXME
-		resources.add(swaggerResource("consumer-server", "/consumer-server/v2/api-docs", "2.0")) //FIXME
+		resources.add(swaggerResource("book-server", "/producer-server/v2/api-docs", "2.0"))
+		resources.add(swaggerResource("sale-server", "/producer-server/v2/api-docs", "2.0"))
+		resources.add(swaggerResource("user-server", "/producer-server/v2/api-docs", "2.0"))
+		resources.add(swaggerResource("news-server", "/producer-server/v2/api-docs", "2.0"))
 		return resources
 	}
 
