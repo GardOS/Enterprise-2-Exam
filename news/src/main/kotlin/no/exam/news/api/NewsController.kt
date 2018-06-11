@@ -48,10 +48,10 @@ class NewsController {
 	}
 
 	//GET ALL
-	@ApiOperation("Get all the news. If \"getLatest\" param is true them the last ten news is returned")
+	@ApiOperation("Get all the news, add \"getLatest\" flag for the ten latest news")
 	@GetMapping
 	fun getAllNews(
-			@RequestParam("getLatest", required = false, defaultValue = "false")
+			@RequestParam(name = "getLatest", required = false, defaultValue = "false")
 			getLatest: Boolean
 	): ResponseEntity<List<NewsDto>> {
 		val news = newsRepo.findAll()

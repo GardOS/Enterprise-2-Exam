@@ -1,3 +1,6 @@
+bookServerPath: PlaceholderValue
+userServerPath: PlaceholderValue
+
 server:
   port: 8082
 
