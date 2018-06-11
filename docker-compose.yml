@@ -6,7 +6,7 @@ services:
     image: "redis:latest"
   postgres-book:
     image: "postgres:10"
-  postgres-consumer: #FIXME
+  postgres-sale:
     image: "postgres:10"
 
   #Message queue
@@ -43,7 +43,6 @@ services:
       - gateway
       - postgres-book
       - redis
-      - rabbitmq
   book-server_1:
     build:
       context: book
@@ -54,15 +53,14 @@ services:
       - gateway
       - postgres-book
       - redis
-      - rabbitmq
-  consumer-server: #FIXME
+  sale-server:
     build:
-      context: consumer #FIXME
+      context: sale
       dockerfile: Dockerfile
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     depends_on:
       - gateway
-      - postgres-consumer #FIXME
+      - postgres-sale
       - redis
       - rabbitmq

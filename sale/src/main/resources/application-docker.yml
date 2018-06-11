@@ -1,0 +1,34 @@
+bookServerPath: http://book-server/books
+userServerPath: http://user-server/users
+
+spring:
+  application:
+    name: sale-server
+  datasource:
+    url: "jdbc:postgresql://postgres-sale:5432/postgres"
+    username: "postgres"
+    password: ""
+    driver-class-name: "org.postgresql.Driver"
+  jpa:
+    database: "postgresql"
+    hibernate:
+      ddl-auto: "update"
+  rabbitmq:
+    host: rabbitmq
+  session:
+    store-type: redis
+  redis:
+    host: redis
+    port: 6379
+
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    healthcheck:
+      enabled: true
+    serviceUrl:
+      defaultZone: http://eureka:8761/eureka/
+
+security:
+  sessions: NEVER

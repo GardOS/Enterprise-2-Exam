@@ -1,0 +1,10 @@
+server:
+  port: 8082
+
+spring:
+  session:
+    store-type: none
+
+eureka:
+  client:
+    enabled: false
