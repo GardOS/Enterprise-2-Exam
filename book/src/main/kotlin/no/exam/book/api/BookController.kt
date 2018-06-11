@@ -46,7 +46,7 @@ class BookController {
 			pathId: Long
 	): ResponseEntity<Any> {
 		val book = bookRepo.findOne(pathId)
-				?: return ResponseEntity.status(404).body("book with id: $pathId not found")
+				?: return ResponseEntity.status(404).body("Book with id: $pathId not found")
 
 		return ResponseEntity.ok(BookConverter.transform(book))
 	}

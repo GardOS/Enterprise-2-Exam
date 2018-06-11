@@ -50,8 +50,6 @@ class SaleController {
 	@Value("\${userServerPath}")
 	private lateinit var userServerPath: String
 
-
-
 	//GET ALL
 	@ApiOperation("Get all sales")
 	@GetMapping
@@ -68,7 +66,7 @@ class SaleController {
 			pathId: Long
 	): ResponseEntity<Any> {
 		val sale = saleRepo.findOne(pathId)
-				?: return ResponseEntity.status(404).body("sale with id: $pathId not found")
+				?: return ResponseEntity.status(404).body("Sale with id: $pathId not found")
 
 		return ResponseEntity.ok(SaleConverter.transform(sale))
 	}
