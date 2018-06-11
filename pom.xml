@@ -15,6 +15,7 @@
         <module>endToEnd</module>
         <module>book</module>
         <module>sale</module>
+        <module>news</module>
     </modules>
     <packaging>pom</packaging>
 

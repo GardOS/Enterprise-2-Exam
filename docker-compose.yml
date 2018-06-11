@@ -8,6 +8,8 @@ services:
     image: "postgres:10"
   postgres-sale:
     image: "postgres:10"
+  postgres-news:
+    image: "postgres:10"
 
   #Message queue
   rabbitmq:
@@ -62,5 +64,16 @@ services:
     depends_on:
       - gateway
       - postgres-sale
+      - redis
+      - rabbitmq
+  news-server:
+    build:
+      context: news
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - gateway
+      - postgres-news
       - redis
       - rabbitmq
