@@ -78,7 +78,7 @@ class BookController {
 	//PUT
 	@ApiOperation("Replace an existing book. Id will not be changed")
 	@PutMapping(path = ["/{id}"], consumes = [MediaType.APPLICATION_JSON_VALUE])
-	fun updateBook(
+	fun replaceBook(
 			@ApiParam("Id of the book")
 			@PathVariable("id")
 			pathId: Long,
@@ -107,8 +107,8 @@ class BookController {
 
 	//PATCH
 	@ApiOperation("Update an existing book")
-	@PatchMapping(path = ["/{id}"], consumes = [MediaType.TEXT_PLAIN_VALUE])
-	fun updateBookName(
+	@PatchMapping(path = ["/{id}"], consumes = [MediaType.APPLICATION_JSON_VALUE])
+	fun updateBook(
 			@ApiParam("Id of the book")
 			@PathVariable("id")
 			pathId: Long,
@@ -159,11 +159,12 @@ class BookController {
 		for (i in 0..4) { //Iterate 5 times max, since it might have infinite depth
 			if (cause is JavaxConstraintViolationException || cause is HibernateConstraintViolationException) {
 				response.status = HttpStatus.BAD_REQUEST.value()
-				return "Invalid request. Error:\n${ex.message ?: "Error not found"}"
+				return "Invalid request. Error:\n${ex.message ?: "Error not found"}" //TODO: Remove ex.message
 			}
 			cause = cause?.cause
 		}
 		response.status = HttpStatus.INTERNAL_SERVER_ERROR.value()
-		return "Something went wrong processing the request.  Error:\n${ex.message ?: "Error not found"}"
+		return "Something went wrong processing the request.  Error:\n${ex.message
+				?: "Error not found"}" //TODO: Remove ex.message
 	}
 }
