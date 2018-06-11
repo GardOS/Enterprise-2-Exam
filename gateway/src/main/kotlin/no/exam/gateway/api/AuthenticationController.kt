@@ -1,7 +1,7 @@
 package no.exam.gateway.api
 
 import io.swagger.annotations.Api
-import no.exam.gateway.model.UserService
+import no.exam.gateway.model.AuthUserService
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.AuthenticationManager
@@ -19,15 +19,15 @@ import javax.servlet.http.HttpSession
 @RestController
 @Validated
 class AuthenticationController(
-		private val service: UserService,
+		private val serviceAuth: AuthUserService,
 		private val authenticationManager: AuthenticationManager,
 		private val userDetailsService: UserDetailsService
 ) {
-	@RequestMapping("/user")
-	fun getUser(user: Principal): ResponseEntity<Map<String, Any>> {
+	@RequestMapping("/authUser")
+	fun getUser(principal: Principal): ResponseEntity<Map<String, Any>> {
 		val map = mutableMapOf<String, Any>()
-		map["name"] = user.name
-		map["roles"] = AuthorityUtils.authorityListToSet((user as Authentication).authorities)
+		map["name"] = principal.name
+		map["roles"] = AuthorityUtils.authorityListToSet((principal as Authentication).authorities)
 		return ResponseEntity.ok(map)
 	}
 
@@ -36,7 +36,7 @@ class AuthenticationController(
 			@ModelAttribute(name = "username") username: String,
 			@ModelAttribute(name = "password") password: String
 	): ResponseEntity<Void> {
-		val registered = service.createUser(username, password, setOf("USER"))
+		val registered = serviceAuth.createUser(username, password, setOf("USER"))
 
 		if (!registered) {
 			return ResponseEntity.status(400).build()
@@ -65,7 +65,7 @@ class AuthenticationController(
 			@ModelAttribute(name = "username") username: String,
 			@ModelAttribute(name = "password") password: String
 	): ResponseEntity<Void> {
-		service.getUser(username, password) ?: return ResponseEntity.status(401).build()
+		serviceAuth.getUser(username, password) ?: return ResponseEntity.status(401).build()
 
 		val userDetails = userDetailsService.loadUserByUsername(username)
 		val token = UsernamePasswordAuthenticationToken(userDetails, password, userDetails.authorities)

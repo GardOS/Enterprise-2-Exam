@@ -7,7 +7,7 @@ import javax.persistence.Id
 import javax.validation.constraints.NotNull
 
 @Entity
-class User(
+class AuthUser(
 		@get:Id
 		@get:NotBlank
 		var username: String?,

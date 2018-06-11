@@ -1,9 +1,9 @@
 package no.exam.gateway
 
 import com.netflix.config.ConfigurationManager
-import no.exam.gateway.model.User
-import no.exam.gateway.model.UserRepository
-import no.exam.gateway.model.UserService
+import no.exam.gateway.model.AuthUser
+import no.exam.gateway.model.AuthUserRepository
+import no.exam.gateway.model.AuthUserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.SpringApplication
@@ -47,17 +47,17 @@ fun main(args: Array<String>) {
 @Component
 internal class CommandLineAppStartupRunner : CommandLineRunner {
 	@Autowired
-	var userRepository: UserRepository? = null
+	var authUserRepository: AuthUserRepository? = null
 	@Autowired
 	var passwordEncoder: PasswordEncoder? = null
 	@Autowired
-	var userService: UserService? = null
+	var authUserService: AuthUserService? = null
 
 	override fun run(vararg args: String) {
 		val username = "admin"
 		val password = passwordEncoder!!.encode("pwd")
 		val roles = hashSetOf("ROLE_USER", "ROLE_ADMIN", "ROLE_ACTUATOR")
-		userService?.createUser(username, password, roles)
-		userRepository!!.save(User(username, password, roles))
+		authUserService?.createUser(username, password, roles)
+		authUserRepository!!.save(AuthUser(username, password, roles))
 	}
 }

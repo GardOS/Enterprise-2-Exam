@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository
 import javax.transaction.Transactional
 
 @Repository
-interface UserRepository : CrudRepository<User, String>, UserRepositoryCustom
+interface AuthUserRepository : CrudRepository<AuthUser, String>, AuthUserRepositoryCustom
 
 @Transactional
-interface UserRepositoryCustom
+interface AuthUserRepositoryCustom

@@ -62,10 +62,11 @@ class GatewaySecurityConfig(
 	override fun configure(auth: AuthenticationManagerBuilder) {
 		auth.jdbcAuthentication()
 				.dataSource(dataSource)
-				.usersByUsernameQuery("SELECT username, password, enabled FROM user WHERE username=?")
+				.usersByUsernameQuery("SELECT username, password, enabled " +
+						"FROM auth_user WHERE username=?")
 				.authoritiesByUsernameQuery(
-						"SELECT x.username, y.roles FROM user x, user_roles y " +
-								"WHERE x.username=? and y.user_username=x.username")
+						"SELECT x.username, y.roles FROM auth_user x, auth_user_roles y " +
+								"WHERE x.username=? and y.auth_user_username=x.username")
 				.passwordEncoder(passwordEncoder)
 	}
 }

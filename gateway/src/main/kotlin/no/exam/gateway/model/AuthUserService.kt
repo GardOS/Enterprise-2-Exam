@@ -7,9 +7,9 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 @Transactional
-class UserService(
+class AuthUserService(
 		@Autowired
-		private val userRepo: UserRepository,
+		private val authUserRepo: AuthUserRepository,
 		@Autowired
 		private val passwordEncoder: PasswordEncoder
 ) {
@@ -17,10 +17,10 @@ class UserService(
 		try {
 			val hashedPassword = passwordEncoder.encode(password)
 
-			if (userRepo.exists(username)) return false
+			if (authUserRepo.exists(username)) return false
 
-			val user = User(username, hashedPassword, roles.map { "ROLE_$it" }.toSet())
-			userRepo.save(user)
+			val authUser = AuthUser(username, hashedPassword, roles.map { "ROLE_$it" }.toSet())
+			authUserRepo.save(authUser)
 
 			return true
 		} catch (e: Exception) {
@@ -28,13 +28,13 @@ class UserService(
 		}
 	}
 
-	fun getUser(username: String, password: String): User? {
+	fun getUser(username: String, password: String): AuthUser? {
 		try {
-			val user = userRepo.findOne(username)
-			if (!passwordEncoder.matches(password, user.password)) {
+			val authUser = authUserRepo.findOne(username)
+			if (!passwordEncoder.matches(password, authUser.password)) {
 				return null
 			}
-			return user
+			return authUser
 		} catch (e: Exception) {
 			return null
 		}
