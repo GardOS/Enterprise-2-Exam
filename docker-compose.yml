@@ -10,10 +10,12 @@ services:
     image: "postgres:10"
   postgres-news:
     image: "postgres:10"
+  postgres-user:
+    image: "postgres:10"
 
   #Message queue
   rabbitmq:
-    image:  "rabbitmq:3"
+    image: "rabbitmq:3"
 
   #Custom service
   gateway:
@@ -64,6 +66,17 @@ services:
     depends_on:
       - gateway
       - postgres-sale
+      - redis
+      - rabbitmq
+  user-server:
+    build:
+      context: user
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - gateway
+      - postgres-user
       - redis
       - rabbitmq
   news-server:

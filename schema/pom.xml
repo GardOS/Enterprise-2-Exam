@@ -12,6 +12,7 @@
     <artifactId>schema</artifactId>
 
     <dependencies>
+        <!--Api documentation-->
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>

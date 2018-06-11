@@ -14,6 +14,7 @@
         <module>book</module>
         <module>sale</module>
         <module>news</module>
+        <module>user</module>
     </modules>
     <packaging>pom</packaging>
 
