@@ -24,9 +24,9 @@ import javax.servlet.http.HttpSession
 import org.hibernate.exception.ConstraintViolationException as HibernateConstraintViolationException
 import javax.validation.ConstraintViolationException as JavaxConstraintViolationException
 
-@Api(value = "/sale", description = "API for sale")
+@Api(value = "/sales", description = "API for Sale")
 @RequestMapping(
-		path = ["/sale"],
+		path = ["/sales"],
 		produces = [(MediaType.APPLICATION_JSON_VALUE)]
 )
 @RestController
@@ -50,48 +50,7 @@ class SaleController {
 	@Value("\${userServerPath}")
 	private lateinit var userServerPath: String
 
-	//RABBIT
-	@ApiOperation("Send message via rabbitmq")
-	@PostMapping(path = ["/rabbit"])
-	fun rabbitmq(
-			@ApiParam("Sale dto. Should not specify id")
-			@RequestBody
-			dto: SaleDto
-	): ResponseEntity<Any> {
-		val sale = SaleDto()
-		rabbitTemplate.convertAndSend(fanout.name, "", sale)
-		return ResponseEntity.ok().build()
-	}
 
-	//REST_TEMPLATE
-	@ApiOperation("Send message with RestTemplate")
-	@PostMapping(path = ["/rest-template"], consumes = [(MediaType.APPLICATION_JSON_VALUE)])
-	fun sendMessage(
-			@ApiParam("Sale dto. Should not specify id")
-			@RequestBody
-			dto: ProducerDto,
-			session: HttpSession
-	): ResponseEntity<Any> {
-		//Id is auto-generated and should not be specified
-		if (dto.id != null) {
-			return ResponseEntity.status(400).body("Id should not be specified")
-		}
-
-		val url = bookServerPath
-		val headers = HttpHeaders()
-		headers.add("cookie", "SESSION=${session.id}")
-		val httpEntity = HttpEntity(ProducerDto(name = dto.name), headers)
-
-		val status: HttpStatus
-		try {
-			status = restTemplate.exchange(url, HttpMethod.POST, httpEntity, ProducerDto::class.java).statusCode
-		} catch (ex: HttpClientErrorException) {
-			return ResponseEntity.status(ex.statusCode).body("Error when querying Producer:\n" +
-					"$ex.responseBodyAsString")
-		}
-
-		return ResponseEntity.status(status).build()
-	}
 
 	//GET ALL
 	@ApiOperation("Get all sales")
@@ -204,5 +163,53 @@ class SaleController {
 		}
 		response.status = HttpStatus.INTERNAL_SERVER_ERROR.value()
 		return "Something went wrong processing the request.  Error:\n${ex.message ?: "Error not found"}"
+	}
+
+	//RABBIT
+	@ApiOperation("Send message via rabbitmq")
+	@PostMapping(path = ["/rabbit"])
+	fun rabbitmq(
+			@ApiParam("Sale dto. Should not specify id")
+			@RequestBody
+			dto: SaleDto
+	): ResponseEntity<Any> {
+		val sale = SaleDto(
+				id = 123,
+				user = "User",
+				book = 123,
+				price = 1234
+		)
+		rabbitTemplate.convertAndSend(fanout.name, "", sale)
+		return ResponseEntity.ok().build()
+	}
+
+	//REST_TEMPLATE
+	@ApiOperation("Send message with RestTemplate")
+	@PostMapping(path = ["/rest-template"], consumes = [(MediaType.APPLICATION_JSON_VALUE)])
+	fun sendMessage(
+			@ApiParam("Sale dto. Should not specify id")
+			@RequestBody
+			dto: ProducerDto,
+			session: HttpSession
+	): ResponseEntity<Any> {
+		//Id is auto-generated and should not be specified
+		if (dto.id != null) {
+			return ResponseEntity.status(400).body("Id should not be specified")
+		}
+
+		val url = bookServerPath
+		val headers = HttpHeaders()
+		headers.add("cookie", "SESSION=${session.id}")
+		val httpEntity = HttpEntity(ProducerDto(name = dto.name), headers)
+
+		val status: HttpStatus
+		try {
+			status = restTemplate.exchange(url, HttpMethod.POST, httpEntity, ProducerDto::class.java).statusCode
+		} catch (ex: HttpClientErrorException) {
+			return ResponseEntity.status(ex.statusCode).body("Error when querying Producer:\n" +
+					"$ex.responseBodyAsString")
+		}
+
+		return ResponseEntity.status(status).build()
 	}
 }
