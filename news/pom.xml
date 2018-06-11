@@ -76,7 +76,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <mainClass>NewsApplication</mainClass>
-                    <finalName>producer</finalName>
+                    <finalName>news</finalName>
                 </configuration>
             </plugin>
         </plugins>
