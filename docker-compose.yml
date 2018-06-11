@@ -4,7 +4,7 @@ services:
   #Data storage
   redis:
     image: "redis:latest"
-  postgres-producer: #FIXME
+  postgres-book:
     image: "postgres:10"
   postgres-consumer: #FIXME
     image: "postgres:10"
@@ -33,15 +33,26 @@ services:
       - "8761:8761"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
-  producer-server: #FIXME
+  book-server_0:
     build:
-      context: producer #FIXME
+      context: book
       dockerfile: Dockerfile
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     depends_on:
       - gateway
-      - postgres-producer #FIXME
+      - postgres-book
+      - redis
+      - rabbitmq
+  book-server_1:
+    build:
+      context: book
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - gateway
+      - postgres-book
       - redis
       - rabbitmq
   consumer-server: #FIXME
