@@ -19,5 +19,8 @@ data class NewsDto(
 		var bookTitle: String? = null,
 
 		@ApiModelProperty("Price of the book")
-		var bookPrice: Int? = null
+		var bookPrice: Int? = null,
+
+		@ApiModelProperty("Condition of the book")
+		var bookCondition: String? = null
 ) : Serializable

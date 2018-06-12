@@ -9,7 +9,8 @@ class SaleConverter {
 					id = sale.id,
 					user = sale.user,
 					book = sale.book,
-					price = sale.price
+					price = sale.price,
+					condition = sale.condition
 			)
 		}
 

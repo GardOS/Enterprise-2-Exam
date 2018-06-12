@@ -1,9 +1,9 @@
 package no.exam.sale.model
 
-import org.jetbrains.annotations.NotNull
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.Id
+import javax.validation.constraints.NotNull
 
 @Entity
 class Sale(
@@ -14,6 +14,7 @@ class Sale(
 		@get:NotNull
 		var book: Long? = null,
 		@get:NotNull
-		var price: Int? = null
-
+		var price: Int? = null,
+		@get:NotNull
+		var condition: String? = null
 )

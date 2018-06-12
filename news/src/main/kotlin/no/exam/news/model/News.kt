@@ -1,9 +1,9 @@
 package no.exam.news.model
 
-import org.jetbrains.annotations.NotNull
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.Id
+import javax.validation.constraints.NotNull
 
 @Entity
 class News(
@@ -16,5 +16,7 @@ class News(
 		@get:NotNull
 		var bookTitle: String? = null,
 		@get:NotNull
-		var bookPrice: Int? = null
+		var bookPrice: Int? = null,
+		@get:NotNull
+		var bookCondition: String? = null
 )

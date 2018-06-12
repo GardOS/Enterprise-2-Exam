@@ -155,14 +155,17 @@ class SaleController {
 				Sale(
 						user = user.username,
 						book = book.id,
-						price = dto.price)
+						price = dto.price,
+						condition = dto.condition
+				)
 		)
 
 		val newsDto = NewsDto(
 				sale = sale.id,
 				sellerName = user.name,
 				bookTitle = book.title,
-				bookPrice = sale.price
+				bookPrice = sale.price,
+				bookCondition = sale.condition
 		)
 
 		//RabbitMQ news

@@ -16,5 +16,8 @@ data class SaleDto(
 		var book: Long? = null,
 
 		@ApiModelProperty("Price of the book")
-		var price: Int? = null
+		var price: Int? = null,
+
+		@ApiModelProperty("Condition of the book")
+		var condition: String? = null
 ) : Serializable

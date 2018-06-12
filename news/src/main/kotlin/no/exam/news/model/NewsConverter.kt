@@ -10,7 +10,8 @@ class NewsConverter {
 					sale = news.sale,
 					sellerName = news.sellerName,
 					bookTitle = news.bookTitle,
-					bookPrice = news.bookPrice
+					bookPrice = news.bookPrice,
+					bookCondition = news.bookCondition
 			)
 		}
 
