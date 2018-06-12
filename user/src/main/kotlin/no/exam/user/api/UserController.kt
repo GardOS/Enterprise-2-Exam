@@ -61,8 +61,11 @@ class UserController {
 	@RabbitListener(queues = ["#{saleDeletedQueue.name}"])
 	fun saleDeletedEvent(sale: SaleDto) {
 		try {
-			userRepo.deleteBySales(sale.id!!)
+			val user = userRepo.findOne(sale.user)
+			user.sales!!.remove(sale.id)
+			userRepo.save(user)
 		} catch (ex: Exception) {
+			println(ex.message)
 		}
 	}
 

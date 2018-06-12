@@ -217,9 +217,11 @@ class SaleController {
 		if (!saleRepo.exists(pathId))
 			return ResponseEntity.status(404).body("Sale with id: $pathId not found")
 
-		saleRepo.delete(pathId)
+		val sale = saleRepo.findOne(pathId)
 
-		rabbitTemplate.convertAndSend(saleDeletedFanout.name, "", SaleDto(id = pathId))
+		saleRepo.delete(sale)
+
+		rabbitTemplate.convertAndSend(saleDeletedFanout.name, "", SaleConverter.transform(sale))
 
 		return ResponseEntity.status(204).build()
 	}
