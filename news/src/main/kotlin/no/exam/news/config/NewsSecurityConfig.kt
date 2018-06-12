@@ -1,4 +1,4 @@
-package no.exam.news
+package no.exam.news.config
 
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod

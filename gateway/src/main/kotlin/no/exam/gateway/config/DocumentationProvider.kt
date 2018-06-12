@@ -1,4 +1,4 @@
-package no.exam.gateway
+package no.exam.gateway.config
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.context.annotation.Primary

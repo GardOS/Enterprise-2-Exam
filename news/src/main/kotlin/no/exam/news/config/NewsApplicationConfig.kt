@@ -1,15 +1,21 @@
-package no.exam.news
+package no.exam.news.config
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import no.exam.news.model.News
+import no.exam.news.model.NewsRepository
 import org.springframework.amqp.core.*
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.CommandLineRunner
 import org.springframework.cloud.client.loadbalancer.LoadBalanced
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient
 import org.springframework.cloud.netflix.ribbon.RibbonClient
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
+import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
 import springfox.documentation.builders.ApiInfoBuilder
 import springfox.documentation.builders.PathSelectors
@@ -21,6 +27,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2
 
 @Configuration
 @EnableSwagger2
+@EnableEurekaClient
 @RibbonClient(name = "book-server")
 class NewsApplicationConfig {
 
@@ -102,5 +109,45 @@ class NewsApplicationConfig {
 	@Bean
 	fun saleDeletedBinding(saleDeletedFanout: FanoutExchange, saleDeletedQueue: Queue): Binding {
 		return BindingBuilder.bind(saleDeletedQueue).to(saleDeletedFanout)
+	}
+
+	@Component
+	internal class DataPreLoader : CommandLineRunner {
+		@Autowired
+		var newsRepo: NewsRepository? = null
+
+		override fun run(vararg args: String) {
+			newsRepo!!.save(News(
+					sale = 1,
+					sellerName = "user name",
+					bookTitle = "JavaScript: The Definitive Guide",
+					bookPrice = 300,
+					bookCondition = "Visibly used"
+			))
+
+			newsRepo!!.save(News(
+					sale = 2,
+					sellerName = "user name",
+					bookTitle = "JavaScript: The Good Parts",
+					bookPrice = 1000,
+					bookCondition = "New"
+			))
+
+			newsRepo!!.save(News(
+					sale = 3,
+					sellerName = "admin name",
+					bookTitle = "JavaScript: The Definitive Guide",
+					bookPrice = 700,
+					bookCondition = "Barely used"
+			))
+
+			newsRepo!!.save(News(
+					sale = 4,
+					sellerName = "admin name",
+					bookTitle = "Clean Code",
+					bookPrice = 0,
+					bookCondition = "Poor"
+			))
+		}
 	}
 }
