@@ -16,5 +16,5 @@ data class UserDto(
 		var email: String? = null,
 
 		@ApiModelProperty("Current sales the user has created")
-		var sales: List<Long>? = null
+		var sales: MutableList<Long>? = null
 ) : Serializable

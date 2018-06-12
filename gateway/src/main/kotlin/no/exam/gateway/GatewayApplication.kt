@@ -42,7 +42,7 @@ class GatewayApplication {
 
 	@Bean
 	fun fanout(): FanoutExchange {
-		return FanoutExchange("new-user")
+		return FanoutExchange("user-created")
 	}
 }
 

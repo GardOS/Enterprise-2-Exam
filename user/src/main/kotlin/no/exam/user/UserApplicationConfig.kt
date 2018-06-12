@@ -46,18 +46,51 @@ class UserApplicationConfig {
 				.build()
 	}
 
+	//User created MQ message
 	@Bean
-	fun fanout(): FanoutExchange {
-		return FanoutExchange("new-user")
+	fun userCreatedFanout(): FanoutExchange {
+		return FanoutExchange("user-created")
 	}
 
 	@Bean
-	fun queue(): Queue {
+	fun userCreatedQueue(): Queue {
 		return AnonymousQueue()
 	}
 
 	@Bean
-	fun binding(fanout: FanoutExchange, queue: Queue): Binding {
-		return BindingBuilder.bind(queue).to(fanout)
+	fun userCreatedBinding(userCreatedFanout: FanoutExchange, userCreatedQueue: Queue): Binding {
+		return BindingBuilder.bind(userCreatedQueue).to(userCreatedFanout)
+	}
+
+	//Sale created MQ message
+	@Bean
+	fun saleCreatedFanout(): FanoutExchange {
+		return FanoutExchange("sale-created")
+	}
+
+	@Bean
+	fun saleCreatedQueue(): Queue {
+		return AnonymousQueue()
+	}
+
+	@Bean
+	fun saleCreatedBinding(saleCreatedFanout: FanoutExchange, saleCreatedQueue: Queue): Binding {
+		return BindingBuilder.bind(saleCreatedQueue).to(saleCreatedFanout)
+	}
+
+	//Sale deleted MQ message
+	@Bean
+	fun saleDeletedFanout(): FanoutExchange {
+		return FanoutExchange("sale-deleted")
+	}
+
+	@Bean
+	fun saleDeletedQueue(): Queue {
+		return AnonymousQueue()
+	}
+
+	@Bean
+	fun saleDeletedBinding(saleDeletedFanout: FanoutExchange, saleDeletedQueue: Queue): Binding {
+		return BindingBuilder.bind(saleDeletedQueue).to(saleDeletedFanout)
 	}
 }

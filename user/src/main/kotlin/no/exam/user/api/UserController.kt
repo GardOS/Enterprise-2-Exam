@@ -3,6 +3,7 @@ package no.exam.user.api
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiParam
+import no.exam.schema.SaleDto
 import no.exam.schema.UserDto
 import no.exam.user.model.User
 import no.exam.user.model.UserConverter
@@ -32,18 +33,36 @@ class UserController {
 	private lateinit var userRepo: UserRepository
 
 	//RABBIT
-	@RabbitListener(queues = ["#{queue.name}"])
-	fun newUser(user: UserDto) {
+	@RabbitListener(queues = ["#{userCreatedQueue.name}"])
+	fun userCreatedEvent(user: UserDto) {
 		try {
 			userRepo.save(
 					User(
 							username = user.username,
 							name = user.name,
 							email = user.email,
-							sales = listOf()
+							sales = mutableListOf()
 					)
 			)
 		} catch (e: Exception) {
+		}
+	}
+
+	@RabbitListener(queues = ["#{saleCreatedQueue.name}"])
+	fun saleCreatedEvent(sale: SaleDto) {
+		try {
+			val user = userRepo.findOne(sale.user)
+			user.sales!!.add(sale.id!!)
+			userRepo.save(user)
+		} catch (ex: Exception) {
+		}
+	}
+
+	@RabbitListener(queues = ["#{saleDeletedQueue.name}"])
+	fun saleDeletedEvent(sale: SaleDto) {
+		try {
+			userRepo.deleteBySales(sale.id!!)
+		} catch (ex: Exception) {
 		}
 	}
 
