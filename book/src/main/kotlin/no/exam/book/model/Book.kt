@@ -13,6 +13,5 @@ class Book(
 		var title: String? = null,
 		@get:NotNull
 		var author: String? = null,
-		@get:NotNull
-		var condition: String? = null
+		var edition: String? = null
 )

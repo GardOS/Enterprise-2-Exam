@@ -9,7 +9,7 @@ class BookConverter {
 					id = book.id,
 					title = book.title,
 					author = book.author,
-					condition = book.condition
+					edition = book.edition
 			)
 		}
 

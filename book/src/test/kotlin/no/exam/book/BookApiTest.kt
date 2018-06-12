@@ -56,7 +56,7 @@ class BookApiTest {
 				Book(
 						title = defaultTitle,
 						author = defaultAuthor,
-						condition = defaultCondition
+						edition = defaultEdition
 				)
 		)
 	}
@@ -67,7 +67,7 @@ class BookApiTest {
 	var testBook: Book? = null
 	val defaultTitle: String = "DefaultTitle"
 	val defaultAuthor: String = "DefaultAuthor"
-	val defaultCondition: String = "DefaultCondition"
+	val defaultEdition: String = "DefaultEdition"
 
 	//GET ALL
 	@Test
@@ -80,7 +80,7 @@ class BookApiTest {
 				Book(
 						title = defaultTitle,
 						author = defaultAuthor,
-						condition = defaultCondition
+						edition = defaultEdition
 				)
 		)
 
@@ -110,7 +110,7 @@ class BookApiTest {
 		val book = BookDto(
 				title = "NewTitle",
 				author = "NewAuthor",
-				condition = "NewCondition"
+				edition = "NewEdition"
 		)
 
 		given().contentType(ContentType.JSON)
@@ -131,7 +131,7 @@ class BookApiTest {
 				id = testBook?.id,
 				title = "NewTitle",
 				author = "NewAuthor",
-				condition = "NewCondition"
+				edition = "NewEdition"
 		)
 
 		given().contentType(ContentType.JSON)
@@ -166,7 +166,7 @@ class BookApiTest {
 		val newBook = BookDto(
 				title = "NewTitle",
 				author = "NewAuthor",
-				condition = "NewCondition"
+				edition = "NewEdition"
 		)
 
 		given().contentType(ContentType.JSON)

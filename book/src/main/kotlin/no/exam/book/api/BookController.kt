@@ -68,7 +68,7 @@ class BookController {
 				Book(
 						title = dto.title,
 						author = dto.author,
-						condition = dto.condition
+						edition = dto.edition
 				)
 		)
 
@@ -98,7 +98,7 @@ class BookController {
 						id = dto.id,
 						title = dto.title,
 						author = dto.author,
-						condition = dto.condition
+						edition = dto.edition
 				)
 		)
 
@@ -127,8 +127,8 @@ class BookController {
 		if (dto.author != null)
 			updatedBook.author = dto.author
 
-		if (dto.condition != null)
-			updatedBook.condition = dto.condition
+		if (dto.edition != null)
+			updatedBook.edition = dto.edition
 
 		bookRepo.save(updatedBook)
 

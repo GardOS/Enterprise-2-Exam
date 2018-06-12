@@ -15,6 +15,6 @@ data class BookDto(
 		@ApiModelProperty("Author of the book")
 		var author: String? = null,
 
-		@ApiModelProperty("What condition the book is in")
-		var condition: String? = null
+		@ApiModelProperty("What edition the book is")
+		var edition: String? = null
 ) : Serializable
