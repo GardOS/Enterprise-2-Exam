@@ -2,6 +2,7 @@ package no.exam.user.api
 
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
+import io.swagger.annotations.ApiParam
 import no.exam.schema.UserDto
 import no.exam.user.model.User
 import no.exam.user.model.UserConverter
@@ -14,10 +15,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.TransactionSystemException
 import org.springframework.validation.annotation.Validated
-import org.springframework.web.bind.annotation.ExceptionHandler
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import javax.servlet.http.HttpServletResponse
 import org.hibernate.exception.ConstraintViolationException as HibernateConstraintViolationException
 import javax.validation.ConstraintViolationException as JavaxConstraintViolationException
@@ -49,11 +47,24 @@ class UserController {
 		}
 	}
 
-	//GET ALL
 	@ApiOperation("Get all the users")
 	@GetMapping
 	fun getAllUsers(): ResponseEntity<List<UserDto>> {
 		return ResponseEntity.ok(UserConverter.transform(userRepo.findAll()))
+	}
+
+	@ApiOperation("Get user by username")
+	@GetMapping(path = ["/{username}"])
+	fun getUserByUsername(
+			@ApiParam("Username of user")
+			@PathVariable("username")
+			pathId: String
+	): ResponseEntity<Any> {
+		if (!userRepo.exists(pathId))
+			return ResponseEntity.status(404).build()
+
+		val user = userRepo.findOne(pathId)
+		return ResponseEntity.ok(UserConverter.transform(user))
 	}
 
 	//Catches validation errors and returns error status based on error
