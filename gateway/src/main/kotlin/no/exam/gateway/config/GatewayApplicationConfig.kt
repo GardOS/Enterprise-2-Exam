@@ -14,7 +14,6 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Component
-import springfox.documentation.swagger.web.UiConfiguration
 import springfox.documentation.swagger2.annotations.EnableSwagger2
 
 @Configuration
@@ -26,12 +25,6 @@ class GatewayApplicationConfig {
 	init {
 		val conf = ConfigurationManager.getConfigInstance()
 		conf.setProperty("hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds", 5000)
-	}
-
-	@Bean
-	internal fun swaggerUiConfig(): UiConfiguration {
-		return UiConfiguration("validatorUrl", "list", "alpha", "schema",
-				UiConfiguration.Constants.DEFAULT_SUBMIT_METHODS, false, true, 60000L)
 	}
 
 	@Bean

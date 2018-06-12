@@ -15,7 +15,10 @@ import org.springframework.security.core.authority.AuthorityUtils
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.validation.annotation.Validated
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.ModelAttribute
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RestController
 import java.security.Principal
 import javax.servlet.http.HttpSession
 
@@ -33,7 +36,7 @@ class AuthenticationController(
 	@Autowired
 	private lateinit var fanout: FanoutExchange
 
-	@RequestMapping("/authUser")
+	@GetMapping("/authUser")
 	fun getAuthUser(principal: Principal): ResponseEntity<Map<String, Any>> {
 		val map = mutableMapOf<String, Any>()
 		map["name"] = principal.name

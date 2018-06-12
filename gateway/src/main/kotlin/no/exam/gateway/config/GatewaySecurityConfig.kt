@@ -32,7 +32,7 @@ class GatewaySecurityConfig(
 				.and()
 				.authorizeRequests()
 				//Swagger-ui
-				.antMatchers("/swagger-resources/**", "/webjars/**", "/swagger-ui.html").permitAll() //TODO: Try /v2/api-docs
+				.antMatchers("/swagger-resources/**", "/webjars/**", "/swagger-ui.html", "/v2/api-docs").permitAll()
 				//Actuator
 				.antMatchers("/health").permitAll()
 				.antMatchers("/trace").authenticated()
