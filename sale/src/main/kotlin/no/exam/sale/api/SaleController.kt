@@ -250,34 +250,4 @@ class SaleController {
 		response.status = HttpStatus.INTERNAL_SERVER_ERROR.value()
 		return "Something went wrong processing the request.  Error:\n${ex.message ?: "Error not found"}"
 	}
-
-	//REST_TEMPLATE
-	@ApiOperation("Send message with RestTemplate")
-	@PostMapping(path = ["/rest-template"], consumes = [(MediaType.APPLICATION_JSON_VALUE)])
-	fun sendMessage(
-			@ApiParam("Sale dto. Should not specify id")
-			@RequestBody
-			dto: BookDto,
-			session: HttpSession
-	): ResponseEntity<Any> {
-		//Id is auto-generated and should not be specified
-		if (dto.id != null) {
-			return ResponseEntity.status(400).body("Id should not be specified")
-		}
-
-		val url = bookServerPath
-		val headers = HttpHeaders()
-		headers.add("cookie", "SESSION=${session.id}")
-		val httpEntity = HttpEntity(BookDto(), headers)
-
-		val status: HttpStatus
-		try {
-			status = restTemplate.exchange(url, HttpMethod.POST, httpEntity, BookDto::class.java).statusCode
-		} catch (ex: HttpClientErrorException) {
-			return ResponseEntity.status(ex.statusCode).body("Error when querying Producer:\n" +
-					"$ex.responseBodyAsString")
-		}
-
-		return ResponseEntity.status(status).build()
-	}
 }
