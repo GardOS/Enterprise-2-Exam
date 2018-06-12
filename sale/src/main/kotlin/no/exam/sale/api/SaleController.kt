@@ -14,7 +14,9 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.dao.DataIntegrityViolationException
-import org.springframework.http.*
+import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.transaction.TransactionSystemException
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
@@ -22,7 +24,6 @@ import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.RestTemplate
 import java.security.Principal
 import javax.servlet.http.HttpServletResponse
-import javax.servlet.http.HttpSession
 import org.hibernate.exception.ConstraintViolationException as HibernateConstraintViolationException
 import javax.validation.ConstraintViolationException as JavaxConstraintViolationException
 
@@ -180,7 +181,8 @@ class SaleController {
 			pathId: Long,
 			@ApiParam("Updated sale information. Id, User and book should not be included")
 			@RequestBody
-			dto: SaleDto
+			dto: SaleDto,
+			principal: Principal
 	): ResponseEntity<Any> {
 		if (!saleRepo.exists(pathId))
 			return ResponseEntity.status(404).body("Sale with id: $pathId not found")
@@ -189,6 +191,9 @@ class SaleController {
 			return ResponseEntity.status(400).body("Field(s) not eligible for update")
 
 		val sale = saleRepo.findOne(pathId)
+
+		if (sale.user != principal.name)
+			return ResponseEntity.status(403).body("Mismatch between current user and owner of sale")
 
 		if (dto.price == sale.price && dto.condition == sale.condition)
 			return ResponseEntity.status(400).body("No change found")
@@ -212,12 +217,16 @@ class SaleController {
 	fun deleteSale(
 			@ApiParam("Id of sale")
 			@PathVariable("id")
-			pathId: Long
+			pathId: Long,
+			principal: Principal
 	): ResponseEntity<Any> {
 		if (!saleRepo.exists(pathId))
 			return ResponseEntity.status(404).body("Sale with id: $pathId not found")
 
 		val sale = saleRepo.findOne(pathId)
+
+		if (sale.user != principal.name)
+			return ResponseEntity.status(403).body("Mismatch between current user and owner of sale")
 
 		saleRepo.delete(sale)
 
