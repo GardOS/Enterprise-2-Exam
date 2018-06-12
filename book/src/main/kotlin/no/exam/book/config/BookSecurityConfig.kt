@@ -1,4 +1,4 @@
-package no.exam.book
+package no.exam.book.config
 
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod

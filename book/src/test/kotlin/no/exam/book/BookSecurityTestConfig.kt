@@ -1,5 +1,6 @@
 package no.exam.book
 
+import no.exam.book.config.BookSecurityConfig
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.annotation.Order
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder

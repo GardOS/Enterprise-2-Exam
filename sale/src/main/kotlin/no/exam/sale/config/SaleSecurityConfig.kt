@@ -1,4 +1,4 @@
-package no.exam.sale
+package no.exam.sale.config
 
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod

@@ -1,4 +1,4 @@
-package no.exam.user
+package no.exam.user.config
 
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
