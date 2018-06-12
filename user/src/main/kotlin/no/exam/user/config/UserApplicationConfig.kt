@@ -25,6 +25,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2
 @Configuration
 @EnableEurekaClient
 @EnableSwagger2
+//@RibbonClient(name = "sale-server") //TODO: Bonus
 class UserApplicationConfig {
 
 	@Bean
@@ -52,6 +53,13 @@ class UserApplicationConfig {
 				.modules(JavaTimeModule())
 				.build()
 	}
+
+	//TODO: Bonus
+//	@Bean
+//	@LoadBalanced
+//	fun restTemplate(): RestTemplate {
+//		return RestTemplate()
+//	}
 
 	//User created MQ message
 	@Bean

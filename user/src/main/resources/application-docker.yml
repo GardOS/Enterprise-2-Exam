@@ -1,3 +1,5 @@
+#saleServerPath: http://sale-server/sales #TODO: Bonus
+
 spring:
   application:
     name: user-server

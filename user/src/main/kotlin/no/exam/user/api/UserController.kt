@@ -29,8 +29,16 @@ import javax.validation.ConstraintViolationException as JavaxConstraintViolation
 @RestController
 @Validated
 class UserController {
+//  TODO: Bonus
+//  @Autowired
+//	private lateinit var restTemplate: RestTemplate
+
 	@Autowired
 	private lateinit var userRepo: UserRepository
+
+	//TODO: Bonus
+//	@Value("\${saleServerPath}")
+//	private lateinit var saleServerPath: String
 
 	//RABBIT
 	@RabbitListener(queues = ["#{userCreatedQueue.name}"])
@@ -88,6 +96,28 @@ class UserController {
 		val user = userRepo.findOne(pathId)
 		return ResponseEntity.ok(UserConverter.transform(user))
 	}
+
+	//TODO: Bonus feature
+//	@ApiOperation("Get all sales belonging to user by username")
+//	@GetMapping(path = ["/{username}/sales"])
+//	fun getAllSalesFromUser(
+//			@ApiParam("Username of user")
+//			@PathVariable("username")
+//			pathId: String
+//	): ResponseEntity<Any> {
+//		if (!userRepo.exists(pathId))
+//			return ResponseEntity.status(404).build()
+//
+//		val sales : Array<SaleDto>
+//		try {
+//			sales = restTemplate.getForObject("$saleServerPath/users/$pathId", Array<SaleDto>::class.java)
+//		} catch (ex: HttpClientErrorException) {
+//			return ResponseEntity.status(ex.statusCode).body("Error when querying for User:\n" +
+//					"$ex.responseBodyAsString")
+//		}
+//
+//		return ResponseEntity.ok(sales)
+//	}
 
 	//Catches validation errors and returns error status based on error
 	@ExceptionHandler(value = ([JavaxConstraintViolationException::class, HibernateConstraintViolationException::class,

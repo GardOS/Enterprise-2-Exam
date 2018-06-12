@@ -1,3 +1,5 @@
+#saleServerPath: http://sale-server/sales #TODO: Bonus
+
 server:
   port: 8083
 
