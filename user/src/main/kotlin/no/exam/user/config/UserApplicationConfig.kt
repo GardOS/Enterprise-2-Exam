@@ -120,14 +120,14 @@ internal class DataPreLoader : CommandLineRunner {
 				username = "admin",
 				name = "admin name",
 				email = "admin@admin.com",
-				sales = mutableListOf()
+				sales = mutableListOf(1, 2)
 		))
 
 		userRepo!!.save(User(
 				username = "user",
 				name = "user name",
 				email = "user@user.com",
-				sales = mutableListOf()
+				sales = mutableListOf(3, 4)
 		))
 	}
 }
