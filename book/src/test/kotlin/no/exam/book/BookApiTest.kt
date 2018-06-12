@@ -17,12 +17,13 @@ import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.context.embedded.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
 
 @RunWith(SpringRunner::class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, classes = [(BookApplication::class)])
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = [(BookApplication::class)])
 @ActiveProfiles("test")
 class BookApiTest {
 
@@ -33,7 +34,6 @@ class BookApiTest {
 		@JvmStatic
 		fun initClass() {
 			RestAssured.baseURI = "http://localhost"
-			RestAssured.port = 8080
 			RestAssured.basePath = "/books"
 			RestAssured.enableLoggingOfRequestAndResponseIfValidationFails()
 			RestAssured.authentication = RestAssured.basic("testAdmin", "pwd")
@@ -51,6 +51,8 @@ class BookApiTest {
 
 	@Before
 	fun init() {
+		RestAssured.port = port
+
 		bookRepo.deleteAll()
 		testBook = bookRepo.save(
 				Book(
@@ -60,6 +62,9 @@ class BookApiTest {
 				)
 		)
 	}
+
+	@LocalServerPort
+	protected var port = 0
 
 	@Autowired
 	protected lateinit var bookRepo: BookRepository

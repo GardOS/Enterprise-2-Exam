@@ -18,6 +18,7 @@ import org.junit.runner.RunWith
 import org.springframework.amqp.core.FanoutExchange
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.context.embedded.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
@@ -25,7 +26,7 @@ import org.testcontainers.containers.GenericContainer
 import java.util.concurrent.TimeUnit
 
 @RunWith(SpringRunner::class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, classes = [(NewsApplication::class)])
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = [(NewsApplication::class)])
 @ActiveProfiles("test")
 class NewsApiTest {
 
@@ -40,7 +41,6 @@ class NewsApiTest {
 		@JvmStatic
 		fun initClass() {
 			RestAssured.baseURI = "http://localhost"
-			RestAssured.port = 8080
 			RestAssured.basePath = "/news"
 			RestAssured.enableLoggingOfRequestAndResponseIfValidationFails()
 		}
@@ -48,8 +48,12 @@ class NewsApiTest {
 
 	@Before
 	fun init() {
+		RestAssured.port = port
 		newsRepo.deleteAll()
 	}
+
+	@LocalServerPort
+	protected var port = 0
 
 	@Autowired
 	protected lateinit var newsRepo: NewsRepository
