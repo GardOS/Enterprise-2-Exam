@@ -67,6 +67,12 @@
             <artifactId>springfox-swagger-ui</artifactId>
         </dependency>
 
+        <!--Test-->
+        <dependency>
+            <groupId>com.github.tomakehurst</groupId>
+            <artifactId>wiremock-standalone</artifactId>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>

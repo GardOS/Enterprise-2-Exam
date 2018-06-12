@@ -1,5 +1,5 @@
-bookServerPath: PlaceholderValue
-userServerPath: PlaceholderValue
+bookServerPath: http://localhost:8099/books
+userServerPath: http://localhost:8099/users
 
 spring:
   session:
@@ -9,6 +9,6 @@ eureka:
   client:
     enabled: false
 
-#logging:
-#  level:
-#    org.apache.http: debug #For printing http messages
+logging:
+  level:
+    org.apache.http: debug #For printing http messages TODO: remove
