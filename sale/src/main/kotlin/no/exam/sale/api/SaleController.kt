@@ -9,6 +9,7 @@ import no.exam.sale.model.SaleRepository
 import no.exam.schema.BookDto
 import no.exam.schema.NewsDto
 import no.exam.schema.SaleDto
+import no.exam.schema.UserDto
 import org.springframework.amqp.core.FanoutExchange
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.beans.factory.annotation.Autowired
@@ -133,7 +134,7 @@ class SaleController {
 
 
 		//Find book
-		var book: BookDto
+		val book: BookDto
 		try {
 			book = restTemplate.getForObject("$bookServerPath/${dto.book}", BookDto::class.java)
 		} catch (ex: HttpClientErrorException) {
@@ -142,17 +143,24 @@ class SaleController {
 		}
 
 		//Find user
-		//TODO: Find user using user service
+		val user: UserDto
+		try {
+			user = restTemplate.getForObject("$userServerPath/${principal.name}", UserDto::class.java)
+		} catch (ex: HttpClientErrorException) {
+			return ResponseEntity.status(ex.statusCode).body("Error when querying for Book:\n" +
+					"$ex.responseBodyAsString")
+		}
 
 		val sale = saleRepo.save(
 				Sale(
-						user = principal.name,
-						book = book.id)
+						user = user.username,
+						book = book.id,
+						price = dto.price)
 		)
 
 		val newsDto = NewsDto(
 				sale = sale.id,
-				sellerName = sale.user,
+				sellerName = user.name,
 				bookTitle = book.title,
 				bookPrice = sale.price
 		)
@@ -165,23 +173,26 @@ class SaleController {
 
 	//PATCH
 	@ApiOperation("Update price of sale")
-	@PatchMapping(path = ["/{id}"], consumes = [MediaType.TEXT_PLAIN_VALUE])
+	@PatchMapping(path = ["/{id}"], consumes = [MediaType.APPLICATION_JSON_VALUE])
 	fun updatePrice(
 			@ApiParam("Id of sale")
 			@PathVariable("id")
 			pathId: Long,
 			@ApiParam("The new price for the sale")
 			@RequestBody
-			price: Int
+			dto: SaleDto
 	): ResponseEntity<Any> {
 		if (!saleRepo.exists(pathId))
 			return ResponseEntity.status(404).body("Sale with id: $pathId not found")
 
-		val newSale = saleRepo.save(Sale())
+		val sale = saleRepo.findOne(pathId)
+		sale.price = dto.price
 
-		//TODO: Post update
+		saleRepo.save(sale)
 
-		return ResponseEntity.ok(SaleConverter.transform(newSale))
+		//TODO: Post update to News
+
+		return ResponseEntity.status(204).build()
 	}
 
 	//DELETE
@@ -216,24 +227,6 @@ class SaleController {
 		}
 		response.status = HttpStatus.INTERNAL_SERVER_ERROR.value()
 		return "Something went wrong processing the request.  Error:\n${ex.message ?: "Error not found"}"
-	}
-
-	//RABBIT
-	@ApiOperation("Send message via rabbitmq")
-	@PostMapping(path = ["/rabbit"])
-	fun rabbitmq(
-			@ApiParam("Sale dto. Should not specify id")
-			@RequestBody
-			dto: SaleDto
-	): ResponseEntity<Any> {
-		val sale = SaleDto(
-				id = 123,
-				user = "User",
-				book = 123,
-				price = 1234
-		)
-		rabbitTemplate.convertAndSend(fanout.name, "", sale)
-		return ResponseEntity.ok().build()
 	}
 
 	//REST_TEMPLATE
