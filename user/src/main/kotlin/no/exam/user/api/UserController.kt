@@ -73,7 +73,6 @@ class UserController {
 			user.sales!!.remove(sale.id)
 			userRepo.save(user)
 		} catch (ex: Exception) {
-			println(ex.message)
 		}
 	}
 
