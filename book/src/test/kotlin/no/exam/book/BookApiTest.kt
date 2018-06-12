@@ -124,7 +124,7 @@ class BookApiTest {
 
 	//PUT
 	@Test
-	fun replaceBook_fieldsChanged() {
+	fun replaceBook_bookUpdated() {
 		assertEquals(defaultTitle, bookRepo.findOne(testBook!!.id).title)
 
 		val newBook = BookDto(
@@ -144,18 +144,18 @@ class BookApiTest {
 	}
 
 	@Test
-	fun replaceBook_invalidWhenMissingField() {
+	fun replaceBook_bookCreated() {
 		val newBook = BookDto(
-				id = testBook?.id,
+				id = 1234,
 				title = "NewTitle",
 				author = "NewAuthor"
 		)
 
 		given().contentType(ContentType.JSON)
 				.body(newBook)
-				.put("/${testBook?.id}")
+				.put("/1234")
 				.then()
-				.statusCode(400)
+				.statusCode(201)
 	}
 
 	//PATCH
@@ -163,15 +163,15 @@ class BookApiTest {
 	fun updateBook_fieldsChanged() {
 		assertEquals(defaultTitle, bookRepo.findOne(testBook!!.id).title)
 
-		val newBook = BookDto(
-				title = "NewTitle",
-				author = "NewAuthor",
-				edition = "NewEdition"
-		)
+		val newBookString = """{
+			"title": "NewTitle",
+			"author": "NewAuthor",
+			"edition": "NewEdition"
+			}"""
 
 		given().contentType(ContentType.JSON)
-				.body(newBook)
-				.patch("/${testBook?.id}")
+				.body(newBookString)
+				.patch("/${testBook!!.id}")
 				.then()
 				.statusCode(204)
 
@@ -183,18 +183,46 @@ class BookApiTest {
 		assertEquals(defaultTitle, bookRepo.findOne(testBook!!.id).title)
 		assertEquals(defaultAuthor, bookRepo.findOne(testBook!!.id).author)
 
-		val newBook = BookDto(
-				title = "NewTitle"
-		)
+		val newBookString = """{"title": "NewTitle"}"""
 
 		given().contentType(ContentType.JSON)
-				.body(newBook)
+				.body(newBookString)
 				.patch("/${testBook?.id}")
 				.then()
 				.statusCode(204)
 
 		assertEquals("NewTitle", bookRepo.findOne(testBook!!.id).title)
 		assertEquals(defaultAuthor, bookRepo.findOne(testBook!!.id).author)
+	}
+
+	@Test
+	fun updateBook_UpdatesWhenNullValueSet() {
+		assertEquals(defaultEdition, bookRepo.findOne(testBook!!.id).edition)
+
+		val newBookString = """{"edition": null}"""
+
+		given().contentType(ContentType.JSON)
+				.body(newBookString)
+				.patch("/${testBook?.id}")
+				.then()
+				.statusCode(204)
+
+		assertEquals(null, bookRepo.findOne(testBook!!.id).edition)
+	}
+
+	@Test
+	fun updateBook_IgnoresMissingFields() {
+		assertEquals(defaultEdition, bookRepo.findOne(testBook!!.id).edition)
+
+		val newBookString = """{"title": "NewTitle"}"""
+
+		given().contentType(ContentType.JSON)
+				.body(newBookString)
+				.patch("/${testBook?.id}")
+				.then()
+				.statusCode(204)
+
+		assertEquals(defaultEdition, bookRepo.findOne(testBook!!.id).edition)
 	}
 
 	//DELETE

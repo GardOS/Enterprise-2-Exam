@@ -1,5 +1,7 @@
 package no.exam.book.api
 
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiParam
@@ -76,7 +78,7 @@ class BookController {
 	}
 
 	//PUT
-	@ApiOperation("Replace an existing book. Id will not be changed")
+	@ApiOperation("Replace a book. If exists: Id will not be changed. If not exists: Id will be ignored")
 	@PutMapping(path = ["/{id}"], consumes = [MediaType.APPLICATION_JSON_VALUE])
 	fun replaceBook(
 			@ApiParam("Id of the book")
@@ -90,19 +92,21 @@ class BookController {
 			return ResponseEntity.status(409).body("Inconsistent id. Mismatch between path and body")
 		}
 
-		if (!bookRepo.exists(pathId))
-			return ResponseEntity.status(404).body("Book with id: $pathId not found")
-
-		bookRepo.save(
-				Book(
-						id = dto.id,
-						title = dto.title,
-						author = dto.author,
-						edition = dto.edition
-				)
+		val book = Book(
+				title = dto.title,
+				author = dto.author,
+				edition = dto.edition
 		)
 
-		return ResponseEntity.status(204).build()
+		if (bookRepo.exists(pathId)) {
+			book.id = dto.id
+		}
+
+		val status = if (book.id == null) 201 else 204
+
+		bookRepo.save(book)
+
+		return ResponseEntity.status(status).build()
 	}
 
 	//PATCH
@@ -114,21 +118,50 @@ class BookController {
 			pathId: Long,
 			@ApiParam("Fields to change on the book. Id should not be specified")
 			@RequestBody
-			dto: BookDto //Book cant have null fields. Therefore the null/missing value problem for merge patch is not applicable
+			jsonBook: String
 	): ResponseEntity<Any> {
 		if (!bookRepo.exists(pathId))
 			return ResponseEntity.status(404).body("book with id: $pathId not found")
 
 		val updatedBook = bookRepo.findOne(pathId)
 
-		if (dto.title != null)
-			updatedBook.title = dto.title
+		val jsonNode: JsonNode
+		try {
+			jsonNode = ObjectMapper().readValue(jsonBook, JsonNode::class.java)
+		} catch (e: Exception) {
+			return ResponseEntity.status(400).build()
+		}
 
-		if (dto.author != null)
-			updatedBook.author = dto.author
+		if (jsonNode.has("id")) {
+			return ResponseEntity.status(409).build()
+		}
 
-		if (dto.edition != null)
-			updatedBook.edition = dto.edition
+		if (jsonNode.has("title")) {
+			val nameNode = jsonNode.get("title")
+			when {
+				nameNode.isNull -> updatedBook.title = null
+				nameNode.isTextual -> updatedBook.title = nameNode.asText()
+				else -> return ResponseEntity.status(400).build()
+			}
+		}
+
+		if (jsonNode.has("author")) {
+			val nameNode = jsonNode.get("author")
+			when {
+				nameNode.isNull -> updatedBook.author = null
+				nameNode.isTextual -> updatedBook.author = nameNode.asText()
+				else -> return ResponseEntity.status(400).build()
+			}
+		}
+
+		if (jsonNode.has("edition")) {
+			val nameNode = jsonNode.get("edition")
+			when {
+				nameNode.isNull -> updatedBook.edition = null
+				nameNode.isTextual -> updatedBook.edition = nameNode.asText()
+				else -> return ResponseEntity.status(400).build()
+			}
+		}
 
 		bookRepo.save(updatedBook)
 
