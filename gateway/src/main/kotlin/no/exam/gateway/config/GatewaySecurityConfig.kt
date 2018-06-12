@@ -49,10 +49,8 @@ class GatewaySecurityConfig(
 				.antMatchers("/sale-server/**").authenticated()
 				//User
 				.antMatchers(HttpMethod.GET, "/user-server/**").permitAll()
-				.antMatchers("/user-server/**").authenticated()
 				//News
 				.antMatchers(HttpMethod.GET, "/news-server/**").permitAll()
-				.antMatchers("/news-server/**").authenticated()
 				.anyRequest().denyAll()
 				.and()
 				.csrf()
