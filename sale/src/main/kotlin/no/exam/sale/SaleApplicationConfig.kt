@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import org.springframework.amqp.core.FanoutExchange
 import org.springframework.cloud.client.loadbalancer.LoadBalanced
+import org.springframework.cloud.netflix.ribbon.RibbonClient
+import org.springframework.cloud.netflix.ribbon.RibbonClients
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
@@ -20,6 +22,10 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2
 
 @Configuration
 @EnableSwagger2
+@RibbonClients(value = [
+	RibbonClient(name = "book-server"),
+	RibbonClient(name = "user-server")
+])
 class SaleApplicationConfig {
 
 	@Bean

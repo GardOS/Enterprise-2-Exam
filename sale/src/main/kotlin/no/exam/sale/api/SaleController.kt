@@ -7,6 +7,7 @@ import no.exam.sale.model.Sale
 import no.exam.sale.model.SaleConverter
 import no.exam.sale.model.SaleRepository
 import no.exam.schema.BookDto
+import no.exam.schema.NewsDto
 import no.exam.schema.SaleDto
 import org.springframework.amqp.core.FanoutExchange
 import org.springframework.amqp.rabbit.core.RabbitTemplate
@@ -19,6 +20,7 @@ import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.RestTemplate
+import java.security.Principal
 import javax.servlet.http.HttpServletResponse
 import javax.servlet.http.HttpSession
 import org.hibernate.exception.ConstraintViolationException as HibernateConstraintViolationException
@@ -50,14 +52,12 @@ class SaleController {
 	@Value("\${userServerPath}")
 	private lateinit var userServerPath: String
 
-	//GET ALL
 	@ApiOperation("Get all sales")
 	@GetMapping
 	fun getAllSales(): ResponseEntity<List<SaleDto>> {
 		return ResponseEntity.ok(SaleConverter.transform(saleRepo.findAll()))
 	}
 
-	//GET ONE
 	@ApiOperation("Get sale by id")
 	@GetMapping(path = ["/{id}"])
 	fun getSale(
@@ -71,62 +71,115 @@ class SaleController {
 		return ResponseEntity.ok(SaleConverter.transform(sale))
 	}
 
+	@ApiOperation("Get all books that are for sale")
+	@GetMapping(path = ["/books"])
+	fun getAllBooksOnSale(): ResponseEntity<Any> {
+		//TODO: New book endpoint
+		return ResponseEntity.status(204).build()
+	}
+
+	@ApiOperation("Get sales on a specific book")
+	@GetMapping(path = ["/books/{id}"])
+	fun getSalesForBook(
+			@ApiParam("Id of book")
+			@PathVariable("id")
+			pathId: Long
+	): ResponseEntity<Any> {
+		val sales = saleRepo.findByBook(pathId)
+
+		if (sales.isEmpty())
+			ResponseEntity.status(204)
+
+		return ResponseEntity.ok(SaleConverter.transform(sales))
+	}
+
+	@ApiOperation("Get all users that are currently selling books")
+	@GetMapping(path = ["/users"])
+	fun getAllUsersSellingBooks(): ResponseEntity<Any> {
+		//TODO: New user endpoint
+		return ResponseEntity.status(204).build()
+	}
+
+	@ApiOperation("Get sales from a specific user")
+	@GetMapping(path = ["/users/{username}"])
+	fun getSalesForUser(
+			@ApiParam("Username of user")
+			@PathVariable("username")
+			pathId: String
+	): ResponseEntity<Any> {
+		val users = saleRepo.findByUser(pathId)
+
+		if (users.isEmpty())
+			ResponseEntity.status(204)
+
+		return ResponseEntity.ok(SaleConverter.transform(users))
+	}
+
 	//POST
 	@ApiOperation("Create new sale")
 	@PostMapping(consumes = [(MediaType.APPLICATION_JSON_VALUE)])
 	fun createSale(
-			@ApiParam("Sale dto. Should not specify id")
+			@ApiParam("Sale dto. Should not specify id, nor user")
 			@RequestBody
-			dto: SaleDto
+			dto: SaleDto,
+			principal: Principal
 	): ResponseEntity<Any> {
 		//Id is auto-generated and should not be specified
-		if (dto.id != null) {
+		if (dto.id != null)
 			return ResponseEntity.status(400).body("Id should not be specified")
+
+		if (dto.user != null)
+			return ResponseEntity.status(400).body("User should not be specified")
+
+
+		//Find book
+		var book: BookDto
+		try {
+			book = restTemplate.getForObject("$bookServerPath/${dto.book}", BookDto::class.java)
+		} catch (ex: HttpClientErrorException) {
+			return ResponseEntity.status(ex.statusCode).body("Error when querying for Book:\n" +
+					"$ex.responseBodyAsString")
 		}
 
-		saleRepo.save(Sale())
+		//Find user
+		//TODO: Find user using user service
+
+		val sale = saleRepo.save(
+				Sale(
+						user = principal.name,
+						book = book.id)
+		)
+
+		val newsDto = NewsDto(
+				sale = sale.id,
+				sellerName = sale.user,
+				bookTitle = book.title,
+				bookPrice = sale.price
+		)
+
+		//RabbitMQ news
+		rabbitTemplate.convertAndSend(fanout.name, "", newsDto)
 
 		return ResponseEntity.status(201).build()
 	}
 
 	//PATCH
-	@ApiOperation("Update name of sale")
+	@ApiOperation("Update price of sale")
 	@PatchMapping(path = ["/{id}"], consumes = [MediaType.TEXT_PLAIN_VALUE])
-	fun updateSaleName(
+	fun updatePrice(
 			@ApiParam("Id of sale")
 			@PathVariable("id")
 			pathId: Long,
-			@ApiParam("The new name for the sale")
+			@ApiParam("The new price for the sale")
 			@RequestBody
-			name: String
+			price: Int
 	): ResponseEntity<Any> {
-		if (!saleRepo.exists(pathId))
-			return ResponseEntity.status(404).body("sale with id: $pathId not found")
-
-		val newSale = saleRepo.save(Sale())
-
-		return ResponseEntity.ok(SaleConverter.transform(newSale))
-	}
-
-	//PUT
-	@ApiOperation("Update an existing sale")
-	@PutMapping(path = ["/{id}"], consumes = [MediaType.APPLICATION_JSON_VALUE])
-	fun updateSale(
-			@ApiParam("Id of sale")
-			@PathVariable("id")
-			pathId: Long,
-			@ApiParam("The new sale which will replace the old one")
-			@RequestBody
-			requestDto: SaleDto
-	): ResponseEntity<Any> {
-		if (requestDto.id != null) {
-			return ResponseEntity.status(400).body("Id should not be specified")
-		}
-
 		if (!saleRepo.exists(pathId))
 			return ResponseEntity.status(404).body("Sale with id: $pathId not found")
 
 		val newSale = saleRepo.save(Sale())
+
+		//TODO: Post update
 
 		return ResponseEntity.ok(SaleConverter.transform(newSale))
 	}
@@ -143,6 +196,8 @@ class SaleController {
 			return ResponseEntity.status(404).body("Sale with id: $pathId not found")
 
 		saleRepo.delete(pathId)
+
+		//TODO: Post update
 
 		return ResponseEntity.status(204).build()
 	}

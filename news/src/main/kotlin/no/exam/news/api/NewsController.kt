@@ -6,7 +6,6 @@ import no.exam.news.model.News
 import no.exam.news.model.NewsConverter
 import no.exam.news.model.NewsRepository
 import no.exam.schema.NewsDto
-import no.exam.schema.SaleDto
 import org.springframework.amqp.rabbit.annotation.RabbitListener
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataIntegrityViolationException
@@ -33,14 +32,14 @@ class NewsController {
 
 	//RABBIT
 	@RabbitListener(queues = ["#{queue.name}"])
-	fun rabbitMq(sale: SaleDto) {
+	fun rabbitMq(news: NewsDto) {
 		try {
 			newsRepo.save(
 					News(
-							sale = sale.id,
-							sellerName = sale.user,
-							bookTitle = sale.book.toString(),
-							bookPrice = sale.price
+							sale = news.sale,
+							sellerName = news.sellerName,
+							bookTitle = news.bookTitle,
+							bookPrice = news.bookPrice
 					)
 			)
 		} catch (e: Exception) {
