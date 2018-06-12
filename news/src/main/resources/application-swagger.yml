@@ -1,3 +1,5 @@
+bookServerPath: PlaceholderValue
+
 server:
   port: 8084
 

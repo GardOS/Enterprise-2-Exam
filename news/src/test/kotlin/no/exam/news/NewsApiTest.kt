@@ -40,14 +40,15 @@ class NewsApiTest {
 	@Autowired
 	protected lateinit var newsRepo: NewsRepository
 
-	fun createNews(amount: Int) {
+	fun createNews(amount: Long) {
 		for (i in 1..amount) {
 			newsRepo.save(
 					News(
-							sale = 1234,
+							sale = i,
 							sellerName = "SellerName",
 							bookTitle = "BookTitle",
-							bookPrice = 1234
+							bookPrice = 1234,
+							bookCondition = "BookCondition"
 					)
 			)
 		}
@@ -67,7 +68,7 @@ class NewsApiTest {
 		val newsIds = get()
 				.then()
 				.extract()
-				.path<List<Long>>("id")
+				.path<List<Long>>("sale")
 
 		assertTrue(newsIds.first() < newsIds.last())
 
@@ -76,7 +77,7 @@ class NewsApiTest {
 				.get()
 				.then()
 				.extract()
-				.path<List<Long>>("id")
+				.path<List<Long>>("sale")
 
 		assertTrue(latestNewsIds.first() > latestNewsIds.last())
 	}

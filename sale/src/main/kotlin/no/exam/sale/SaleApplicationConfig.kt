@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import org.springframework.amqp.core.FanoutExchange
+import org.springframework.amqp.core.*
 import org.springframework.cloud.client.loadbalancer.LoadBalanced
 import org.springframework.cloud.netflix.ribbon.RibbonClient
 import org.springframework.cloud.netflix.ribbon.RibbonClients
@@ -60,8 +60,51 @@ class SaleApplicationConfig {
 		return RestTemplate()
 	}
 
+	//Sale created MQ message
 	@Bean
-	fun fanout(): FanoutExchange {
-		return FanoutExchange("new-sale")
+	fun saleCreatedFanout(): FanoutExchange {
+		return FanoutExchange("sale-created")
+	}
+
+	@Bean
+	fun saleCreatedQueue(): Queue {
+		return AnonymousQueue()
+	}
+
+	@Bean
+	fun saleCreatedBinding(saleCreatedFanout: FanoutExchange, saleCreatedQueue: Queue): Binding {
+		return BindingBuilder.bind(saleCreatedQueue).to(saleCreatedFanout)
+	}
+
+	//Sale updated MQ message
+	@Bean
+	fun saleUpdatedFanout(): FanoutExchange {
+		return FanoutExchange("sale-updated")
+	}
+
+	@Bean
+	fun saleUpdatedQueue(): Queue {
+		return AnonymousQueue()
+	}
+
+	@Bean
+	fun saleUpdatedBinding(saleUpdatedFanout: FanoutExchange, saleUpdatedQueue: Queue): Binding {
+		return BindingBuilder.bind(saleUpdatedQueue).to(saleUpdatedFanout)
+	}
+
+	//Sale deleted MQ message
+	@Bean
+	fun saleDeletedFanout(): FanoutExchange {
+		return FanoutExchange("sale-deleted")
+	}
+
+	@Bean
+	fun saleDeletedQueue(): Queue {
+		return AnonymousQueue()
+	}
+
+	@Bean
+	fun saleDeletedBinding(saleDeletedFanout: FanoutExchange, saleDeletedQueue: Queue): Binding {
+		return BindingBuilder.bind(saleDeletedQueue).to(saleDeletedFanout)
 	}
 }

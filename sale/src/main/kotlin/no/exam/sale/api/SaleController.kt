@@ -7,7 +7,6 @@ import no.exam.sale.model.Sale
 import no.exam.sale.model.SaleConverter
 import no.exam.sale.model.SaleRepository
 import no.exam.schema.BookDto
-import no.exam.schema.NewsDto
 import no.exam.schema.SaleDto
 import no.exam.schema.UserDto
 import org.springframework.amqp.core.FanoutExchange
@@ -45,7 +44,13 @@ class SaleController {
 	private lateinit var rabbitTemplate: RabbitTemplate
 
 	@Autowired
-	private lateinit var fanout: FanoutExchange
+	private lateinit var saleCreatedFanout: FanoutExchange
+
+	@Autowired
+	private lateinit var saleUpdatedFanout: FanoutExchange
+
+	@Autowired
+	private lateinit var saleDeletedFanout: FanoutExchange
 
 	@Value("\${bookServerPath}")
 	private lateinit var bookServerPath: String
@@ -160,40 +165,43 @@ class SaleController {
 				)
 		)
 
-		val newsDto = NewsDto(
-				sale = sale.id,
-				sellerName = user.name,
-				bookTitle = book.title,
-				bookPrice = sale.price,
-				bookCondition = sale.condition
-		)
-
 		//RabbitMQ news
-		rabbitTemplate.convertAndSend(fanout.name, "", newsDto)
+		rabbitTemplate.convertAndSend(saleCreatedFanout.name, "", SaleConverter.transform(sale))
 
 		return ResponseEntity.status(201).build()
 	}
 
 	//PATCH
-	@ApiOperation("Update price of sale")
+	@ApiOperation("Update price and/or condition for the book being sold")
 	@PatchMapping(path = ["/{id}"], consumes = [MediaType.APPLICATION_JSON_VALUE])
-	fun updatePrice(
+	fun updateSale(
 			@ApiParam("Id of sale")
 			@PathVariable("id")
 			pathId: Long,
-			@ApiParam("The new price for the sale")
+			@ApiParam("Updated sale information. Id, User and book should not be included")
 			@RequestBody
 			dto: SaleDto
 	): ResponseEntity<Any> {
 		if (!saleRepo.exists(pathId))
 			return ResponseEntity.status(404).body("Sale with id: $pathId not found")
 
+		if (dto.id != null || dto.user != null || dto.book != null)
+			return ResponseEntity.status(400).body("Field(s) not eligible for update")
+
 		val sale = saleRepo.findOne(pathId)
-		sale.price = dto.price
+
+		if (dto.price == sale.price && dto.condition == sale.condition)
+			return ResponseEntity.status(400).body("No change found")
+
+		if (dto.price != null)
+			sale.price = dto.price
+
+		if (dto.condition != null)
+			sale.condition = dto.condition
 
 		saleRepo.save(sale)
 
-		//TODO: Post update to News
+		rabbitTemplate.convertAndSend(saleUpdatedFanout.name, "", SaleConverter.transform(sale))
 
 		return ResponseEntity.status(204).build()
 	}
@@ -211,7 +219,7 @@ class SaleController {
 
 		saleRepo.delete(pathId)
 
-		//TODO: Post update
+		rabbitTemplate.convertAndSend(saleDeletedFanout.name, "", SaleDto(id = pathId))
 
 		return ResponseEntity.status(204).build()
 	}

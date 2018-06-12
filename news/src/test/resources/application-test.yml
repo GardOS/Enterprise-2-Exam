@@ -1,3 +1,5 @@
+bookServerPath: PlaceholderValue
+
 spring:
   session:
     store-type: none

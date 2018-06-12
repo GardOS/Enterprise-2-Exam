@@ -6,7 +6,6 @@ class NewsConverter {
 	companion object {
 		fun transform(news: News): NewsDto {
 			return NewsDto(
-					id = news.id,
 					sale = news.sale,
 					sellerName = news.sellerName,
 					bookTitle = news.bookTitle,

@@ -1,3 +1,5 @@
+bookServerPath: http://book-server/books
+
 server:
   port: 8084
 

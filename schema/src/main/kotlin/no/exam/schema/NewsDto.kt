@@ -6,9 +6,6 @@ import java.io.Serializable
 
 @ApiModel("DTO for News")
 data class NewsDto(
-		@ApiModelProperty("Id of the news")
-		var id: Long? = null,
-
 		@ApiModelProperty("Reference to sale that triggered the news")
 		var sale: Long? = null,
 

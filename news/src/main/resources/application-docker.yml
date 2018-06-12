@@ -1,3 +1,5 @@
+bookServerPath: http://book-server/books
+
 spring:
   application:
     name: news-server

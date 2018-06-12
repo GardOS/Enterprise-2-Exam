@@ -15,3 +15,8 @@ https://www.reddit.com/r/docker/comments/815l9n/docker_for_windows_wont_start_if
 know/understand/care
 * Put: Since Id is auto-increment have to go with some alternative way.
 
+#### News:
+* Could have only references on the news, but chose name/price instead so that its not dependent on other services when
+ presenting news. This however makes it too loosely coupled with book, as there currently is no functionality of 
+ updating the news if an admin updates a name.
+* When updated the order is not changed

@@ -5,9 +5,12 @@ import io.swagger.annotations.ApiOperation
 import no.exam.news.model.News
 import no.exam.news.model.NewsConverter
 import no.exam.news.model.NewsRepository
+import no.exam.schema.BookDto
 import no.exam.schema.NewsDto
+import no.exam.schema.SaleDto
 import org.springframework.amqp.rabbit.annotation.RabbitListener
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -15,6 +18,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.transaction.TransactionSystemException
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.client.RestTemplate
 import javax.servlet.http.HttpServletResponse
 import org.hibernate.exception.ConstraintViolationException as HibernateConstraintViolationException
 import javax.validation.ConstraintViolationException as JavaxConstraintViolationException
@@ -28,22 +32,58 @@ import javax.validation.ConstraintViolationException as JavaxConstraintViolation
 @Validated
 class NewsController {
 	@Autowired
+	private lateinit var restTemplate: RestTemplate
+
+	@Autowired
 	private lateinit var newsRepo: NewsRepository
 
+	@Value("\${bookServerPath}")
+	private lateinit var bookServerPath: String
+
 	//RABBIT
-	@RabbitListener(queues = ["#{queue.name}"])
-	fun rabbitMq(news: NewsDto) {
+	@RabbitListener(queues = ["#{saleCreatedQueue.name}"])
+	fun saleCreatedEvent(sale: SaleDto) {
 		try {
+			//Find book
+			val book: BookDto = try {
+				restTemplate.getForObject("$bookServerPath/${sale.book}", BookDto::class.java)
+			} catch (ex: Exception) {
+				BookDto(title = "Book title not found")
+			}
+
 			newsRepo.save(
 					News(
-							sale = news.sale,
-							sellerName = news.sellerName,
-							bookTitle = news.bookTitle,
-							bookPrice = news.bookPrice,
-							bookCondition = news.bookCondition
+							sale = sale.id,
+							sellerName = sale.user,
+							bookTitle = book.title,
+							bookPrice = sale.price,
+							bookCondition = sale.condition
 					)
 			)
-		} catch (e: Exception) {
+		} catch (ex: Exception) {
+		}
+	}
+
+	@RabbitListener(queues = ["#{saleUpdatedQueue.name}"])
+	fun saleUpdatedEvent(sale: SaleDto) {
+		try {
+			val news = newsRepo.findOne(sale.id)
+			if (sale.price != null)
+				news.bookPrice = sale.price
+
+			if (sale.condition != null)
+				news.bookCondition = sale.condition
+
+			newsRepo.save(news)
+		} catch (ex: Exception) {
+		}
+	}
+
+	@RabbitListener(queues = ["#{saleDeletedQueue.name}"])
+	fun saleDeletedEvent(sale: SaleDto) {
+		try {
+			newsRepo.delete(sale.id)
+		} catch (ex: Exception) {
 		}
 	}
 
