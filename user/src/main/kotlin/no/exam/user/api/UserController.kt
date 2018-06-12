@@ -35,7 +35,7 @@ class UserController {
 
 	//RABBIT
 	@RabbitListener(queues = ["#{queue.name}"])
-	fun rabbitMq(user: UserDto) {
+	fun newUser(user: UserDto) {
 		try {
 			userRepo.save(
 					User(

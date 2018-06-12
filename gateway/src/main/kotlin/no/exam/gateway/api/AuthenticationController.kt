@@ -34,7 +34,7 @@ class AuthenticationController(
 	private lateinit var fanout: FanoutExchange
 
 	@RequestMapping("/authUser")
-	fun getUser(principal: Principal): ResponseEntity<Map<String, Any>> {
+	fun getAuthUser(principal: Principal): ResponseEntity<Map<String, Any>> {
 		val map = mutableMapOf<String, Any>()
 		map["name"] = principal.name
 		map["roles"] = AuthorityUtils.authorityListToSet((principal as Authentication).authorities)
