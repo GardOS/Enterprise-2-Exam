@@ -36,7 +36,9 @@ class SaleApiTest {
 			RestAssured.basePath = "/sales"
 			RestAssured.enableLoggingOfRequestAndResponseIfValidationFails()
 
-			wireMockServer = WireMockServer(WireMockConfiguration.wireMockConfig().port(8099).notifier(ConsoleNotifier(true)))
+			//TODO: Remember port overlap
+			wireMockServer = WireMockServer(WireMockConfiguration.wireMockConfig().port(8099).notifier
+			(ConsoleNotifier(true)))
 			wireMockServer.start()
 		}
 

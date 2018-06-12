@@ -20,13 +20,18 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.embedded.LocalServerPort
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.util.EnvironmentTestUtils
+import org.springframework.context.ApplicationContextInitializer
+import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit4.SpringRunner
 import org.testcontainers.containers.GenericContainer
 import java.util.concurrent.TimeUnit
 
 @RunWith(SpringRunner::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = [(NewsApplication::class)])
+@ContextConfiguration(initializers = [(NewsApiTest.Companion.Initializer::class)])
 @ActiveProfiles("test")
 class NewsApiTest {
 
@@ -35,7 +40,18 @@ class NewsApiTest {
 
 		@ClassRule
 		@JvmField
-		val rabbitMQ = KGenericContainer("rabbitmq:3").withExposedPorts(5672)!!
+		val rabbitMQ = KGenericContainer("rabbitmq:3").withExposedPorts(5672)
+
+		class Initializer : ApplicationContextInitializer<ConfigurableApplicationContext> {
+			override fun initialize(configurableApplicationContext: ConfigurableApplicationContext) {
+				EnvironmentTestUtils.addEnvironment(
+						"testcontainers",
+						configurableApplicationContext.environment,
+						"spring.rabbitmq.host=" + rabbitMQ.containerIpAddress,
+						"spring.rabbitmq.port=" + rabbitMQ.getMappedPort(5672)
+				)
+			}
+		}
 
 		@BeforeClass
 		@JvmStatic

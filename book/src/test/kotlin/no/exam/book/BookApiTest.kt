@@ -1,8 +1,5 @@
 package no.exam.book
 
-import com.github.tomakehurst.wiremock.WireMockServer
-import com.github.tomakehurst.wiremock.common.ConsoleNotifier
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import io.restassured.RestAssured
 import io.restassured.RestAssured.*
 import io.restassured.http.ContentType
@@ -10,7 +7,6 @@ import no.exam.book.model.Book
 import no.exam.book.model.BookRepository
 import no.exam.schema.BookDto
 import org.hamcrest.Matchers.equalTo
-import org.junit.AfterClass
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.BeforeClass
@@ -28,8 +24,6 @@ import org.springframework.test.context.junit4.SpringRunner
 class BookApiTest {
 
 	companion object {
-		lateinit var wireMockServer: WireMockServer
-
 		@BeforeClass
 		@JvmStatic
 		fun initClass() {
@@ -37,15 +31,6 @@ class BookApiTest {
 			RestAssured.basePath = "/books"
 			RestAssured.enableLoggingOfRequestAndResponseIfValidationFails()
 			RestAssured.authentication = RestAssured.basic("testAdmin", "pwd")
-
-			wireMockServer = WireMockServer(WireMockConfiguration.wireMockConfig().port(8099).notifier(ConsoleNotifier(true)))
-			wireMockServer.start()
-		}
-
-		@AfterClass
-		@JvmStatic
-		fun tearDown() {
-			wireMockServer.stop()
 		}
 	}
 
