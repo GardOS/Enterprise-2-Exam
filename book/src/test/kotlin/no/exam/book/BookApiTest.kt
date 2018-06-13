@@ -126,7 +126,7 @@ class BookApiTest {
 
 		given().contentType(ContentType.JSON)
 				.body(newBook)
-				.put("/${testBook?.id}")
+				.put()
 				.then()
 				.statusCode(204)
 
@@ -136,14 +136,13 @@ class BookApiTest {
 	@Test
 	fun replaceBook_bookCreated() {
 		val newBook = BookDto(
-				id = 1234,
 				title = "NewTitle",
 				author = "NewAuthor"
 		)
 
 		given().contentType(ContentType.JSON)
 				.body(newBook)
-				.put("/1234")
+				.put()
 				.then()
 				.statusCode(201)
 	}

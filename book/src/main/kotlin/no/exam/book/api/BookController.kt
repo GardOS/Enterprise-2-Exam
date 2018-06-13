@@ -78,29 +78,19 @@ class BookController {
 	}
 
 	//PUT
-	@ApiOperation("Replace a book. If exists: Id will not be changed. If not exists: Id will be ignored")
-	@PutMapping(path = ["/{id}"], consumes = [MediaType.APPLICATION_JSON_VALUE])
+	@ApiOperation("Replace a book. If not found: Ignores Id and creates using auto-increment ")
+	@PutMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
 	fun replaceBook(
-			@ApiParam("Id of the book")
-			@PathVariable("id")
-			pathId: Long,
 			@ApiParam("The new book which will replace the old one")
 			@RequestBody
 			dto: BookDto
 	): ResponseEntity<Any> {
-		if (dto.id != pathId) {
-			return ResponseEntity.status(409).body("Inconsistent id. Mismatch between path and body")
-		}
-
 		val book = Book(
+				id = dto.id,
 				title = dto.title,
 				author = dto.author,
 				edition = dto.edition
 		)
-
-		if (bookRepo.exists(pathId)) {
-			book.id = dto.id
-		}
 
 		val status = if (book.id == null) 201 else 204
 
