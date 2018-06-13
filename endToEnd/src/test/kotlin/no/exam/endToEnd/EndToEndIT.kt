@@ -49,7 +49,7 @@ class GameFlowIT {
 
 		private fun authenticate() {
 			val token = given().contentType(ContentType.URLENC)
-					.formParam("testUser", "testUser")
+					.formParam("username", "testUser")
 					.formParam("password", "password")
 					.post("/register")
 					.then()
@@ -57,7 +57,7 @@ class GameFlowIT {
 					.extract().cookie("XSRF-TOKEN")
 
 			val session = given().contentType(ContentType.URLENC)
-					.formParam("testUser", "testUser")
+					.formParam("username", "testUser")
 					.formParam("password", "password")
 					.header("X-XSRF-TOKEN", token)
 					.cookie("XSRF-TOKEN", token)
