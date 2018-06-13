@@ -105,7 +105,7 @@ class GameFlowIT {
 				.build()
 
 		RestAssured.given()
-				.get("/user")
+				.get("/user") //TODO: AuthUser
 				.then()
 				.statusCode(200)
 

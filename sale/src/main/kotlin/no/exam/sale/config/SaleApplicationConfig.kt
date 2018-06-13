@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import no.exam.sale.model.Sale
 import no.exam.sale.model.SaleRepository
-import org.springframework.amqp.core.*
+import org.springframework.amqp.core.FanoutExchange
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.CommandLineRunner
 import org.springframework.cloud.client.loadbalancer.LoadBalanced
@@ -15,6 +15,7 @@ import org.springframework.cloud.netflix.ribbon.RibbonClient
 import org.springframework.cloud.netflix.ribbon.RibbonClients
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
@@ -63,6 +64,15 @@ class SaleApplicationConfig {
 
 	@Bean
 	@LoadBalanced
+	fun loadBalancedRestTemplate(): RestTemplate {
+		return RestTemplate()
+	}
+
+	//Although bad practice we use this bean for testing purposes
+	//The reason for this is because of complications of mocking a @LoadBalanced bean
+	//There are probably ways to disable ribbon, or inject your own test beans, but its outside scope for this exam
+	@Bean
+	@Profile("test")
 	fun restTemplate(): RestTemplate {
 		return RestTemplate()
 	}
@@ -73,46 +83,16 @@ class SaleApplicationConfig {
 		return FanoutExchange("sale-created")
 	}
 
-	@Bean
-	fun saleCreatedQueue(): Queue {
-		return AnonymousQueue()
-	}
-
-	@Bean
-	fun saleCreatedBinding(saleCreatedFanout: FanoutExchange, saleCreatedQueue: Queue): Binding {
-		return BindingBuilder.bind(saleCreatedQueue).to(saleCreatedFanout)
-	}
-
 	//Sale updated MQ message
 	@Bean
 	fun saleUpdatedFanout(): FanoutExchange {
 		return FanoutExchange("sale-updated")
 	}
 
-	@Bean
-	fun saleUpdatedQueue(): Queue {
-		return AnonymousQueue()
-	}
-
-	@Bean
-	fun saleUpdatedBinding(saleUpdatedFanout: FanoutExchange, saleUpdatedQueue: Queue): Binding {
-		return BindingBuilder.bind(saleUpdatedQueue).to(saleUpdatedFanout)
-	}
-
 	//Sale deleted MQ message
 	@Bean
 	fun saleDeletedFanout(): FanoutExchange {
 		return FanoutExchange("sale-deleted")
-	}
-
-	@Bean
-	fun saleDeletedQueue(): Queue {
-		return AnonymousQueue()
-	}
-
-	@Bean
-	fun saleDeletedBinding(saleDeletedFanout: FanoutExchange, saleDeletedQueue: Queue): Binding {
-		return BindingBuilder.bind(saleDeletedQueue).to(saleDeletedFanout)
 	}
 }
 

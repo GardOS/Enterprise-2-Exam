@@ -1,6 +1,3 @@
-bookServerPath: http://localhost:8099/books
-userServerPath: http://localhost:8099/users
-
 spring:
   session:
     store-type: none
