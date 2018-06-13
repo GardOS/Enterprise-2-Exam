@@ -78,7 +78,7 @@ class GameFlowIT {
 
 	@Test
 	fun authenticationTest() {
-		RestAssured.get("/seller")
+		RestAssured.get("/authUser")
 				.then()
 				.statusCode(200)
 
@@ -86,7 +86,7 @@ class GameFlowIT {
 				.then()
 				.statusCode(204)
 
-		RestAssured.get("/seller")
+		RestAssured.get("/authUser")
 				.then()
 				.statusCode(401)
 
@@ -105,7 +105,7 @@ class GameFlowIT {
 				.build()
 
 		RestAssured.given()
-				.get("/seller") //TODO: AuthUser
+				.get("/authUser")
 				.then()
 				.statusCode(200)
 
