@@ -27,6 +27,7 @@ services:
     depends_on:
       - eureka
       - redis
+      - rabbitmq
     environment:
       - SPRING_PROFILES_ACTIVE=docker
   eureka:

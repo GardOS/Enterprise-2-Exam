@@ -3,6 +3,8 @@ spring:
     name: gateway
   session:
     store-type: redis
+  rabbitmq:
+    host: rabbitmq
   redis:
     host: redis
     port: 6379
