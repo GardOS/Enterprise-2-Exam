@@ -117,7 +117,7 @@ class SellerApiTest {
 	}
 
 	@Test
-	fun getSellerByUsername_receivesUser() {
+	fun getSellerByUsername_receivesSeller() {
 		val seller = get("/${testSeller!!.username}")
 				.then()
 				.statusCode(200)
@@ -129,7 +129,7 @@ class SellerApiTest {
 	}
 
 	@Test
-	fun sellerCreatedEvent_UserCreated() {
+	fun userCreatedEvent_SellerCreated() {
 		sellerRepo.delete(testSeller)
 
 		testSeller!!.sales = null //Fails to serialize with mutableList

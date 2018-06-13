@@ -103,9 +103,6 @@ class SaleApiTest {
 	@Autowired
 	protected lateinit var saleRepo: SaleRepository
 
-	@Autowired
-	private lateinit var rabbitTemplate: RabbitTemplate
-
 	var testSale: Sale? = null
 	val defaultSeller: String = "testUser"
 	val defaultBook: Long = 1234
