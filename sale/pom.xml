@@ -80,7 +80,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>SaleApplication</mainClass>
+                    <!--<mainClass>SaleApplication</mainClass>-->
                     <finalName>sale</finalName>
                 </configuration>
             </plugin>

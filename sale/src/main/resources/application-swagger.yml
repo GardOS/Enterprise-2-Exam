@@ -7,7 +7,14 @@ server:
 spring:
   session:
     store-type: none
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration
 
 eureka:
   client:
     enabled: false
+
+management:
+  health:
+    rabbit:
+      enabled: false
