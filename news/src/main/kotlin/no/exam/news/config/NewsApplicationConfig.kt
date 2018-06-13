@@ -119,7 +119,7 @@ class NewsApplicationConfig {
 		override fun run(vararg args: String) {
 			newsRepo!!.save(News(
 					sale = 1,
-					sellerName = "seller name",
+					sellerName = "admin name",
 					bookTitle = "JavaScript: The Definitive Guide",
 					bookPrice = 300,
 					bookCondition = "Visibly used"
@@ -127,7 +127,7 @@ class NewsApplicationConfig {
 
 			newsRepo!!.save(News(
 					sale = 2,
-					sellerName = "seller name",
+					sellerName = "admin name",
 					bookTitle = "JavaScript: The Good Parts",
 					bookPrice = 1000,
 					bookCondition = "New"
@@ -135,7 +135,7 @@ class NewsApplicationConfig {
 
 			newsRepo!!.save(News(
 					sale = 3,
-					sellerName = "admin name",
+					sellerName = "seller name",
 					bookTitle = "JavaScript: The Definitive Guide",
 					bookPrice = 700,
 					bookCondition = "Barely used"
@@ -143,7 +143,7 @@ class NewsApplicationConfig {
 
 			newsRepo!!.save(News(
 					sale = 4,
-					sellerName = "admin name",
+					sellerName = "seller name",
 					bookTitle = "Clean Code",
 					bookPrice = 0,
 					bookCondition = "Poor"

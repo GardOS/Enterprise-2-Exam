@@ -26,7 +26,8 @@ class GatewaySecurityConfig(
 	}
 
 	override fun configure(http: HttpSecurity) {
-		http.httpBasic()
+		http.antMatcher("/swagger-ui.html") //Avoid httpBasic popup login
+				.httpBasic()
 				.and()
 				.logout()
 				.and()
@@ -47,7 +48,7 @@ class GatewaySecurityConfig(
 				//Sale
 				.antMatchers(HttpMethod.GET, "/sale-server/**").permitAll()
 				.antMatchers("/sale-server/**").authenticated()
-				//User
+				//Seller
 				.antMatchers(HttpMethod.GET, "/seller-server/**").permitAll()
 				//News
 				.antMatchers(HttpMethod.GET, "/news-server/**").permitAll()

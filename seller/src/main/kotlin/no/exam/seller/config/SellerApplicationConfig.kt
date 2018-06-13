@@ -124,7 +124,7 @@ internal class DataPreLoader : CommandLineRunner {
 		))
 
 		sellerRepo!!.save(Seller(
-				username = "seller",
+				username = "user",
 				name = "seller name",
 				email = "seller@seller.com",
 				sales = mutableListOf(3, 4)
