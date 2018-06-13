@@ -112,6 +112,24 @@ class SaleApiTest {
 	val defaultPrice: Int = 1234
 	val defaultCondition: String = "defaultCondition"
 
+	fun mockBookJsonString(): String{
+		return """{
+			|"id":1,
+			|"title":"JavaScript: The Definitive Guide",
+			|"author":"David Flanagan",
+			|"edition":"6th Edition"
+			|}""".trimMargin()
+	}
+
+	fun mockSellerJsonString(): String{
+		return """{
+			|"username":"testUser",
+			|"name":"test name",
+			|"email":"test@test.com",
+			|"sales":[]
+			|}""".trimMargin()
+	}
+
 	@Test
 	fun getAllSales_receivesMultiple() {
 		get().then()
@@ -170,7 +188,6 @@ class SaleApiTest {
 	}
 
 	@Test
-	@Ignore
 	fun createSale_SaleCreated() {
 		assertEquals(1, saleRepo.count())
 
@@ -185,7 +202,14 @@ class SaleApiTest {
 						WireMock.urlMatching("/books/.*"))
 						.willReturn(WireMock.aResponse()
 								.withHeader("Content-Type", "application/json")
-								.withBody("""{"id": "1"}""")))
+								.withBody(mockBookJsonString())))
+
+		wireMockServer.stubFor(
+				WireMock.get(
+						WireMock.urlMatching("/sellers/.*"))
+						.willReturn(WireMock.aResponse()
+								.withHeader("Content-Type", "application/json")
+								.withBody(mockSellerJsonString())))
 
 		RestAssured.given().contentType(ContentType.JSON)
 				.body(newSale)
