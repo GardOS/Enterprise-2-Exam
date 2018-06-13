@@ -20,3 +20,5 @@ know/understand/care
  presenting news. This however makes it too loosely coupled with book, as there currently is no functionality of 
  updating the news if an admin updates a name.
 * When updated the order is not changed
+
+![Diagram](./Exam.png)  
