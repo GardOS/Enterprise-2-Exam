@@ -32,7 +32,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2
 @EnableSwagger2
 @RibbonClients(value = [
 	RibbonClient(name = "book-server"),
-	RibbonClient(name = "user-server")
+	RibbonClient(name = "seller-server")
 ])
 class SaleApplicationConfig {
 
@@ -103,28 +103,28 @@ internal class DataPreLoader : CommandLineRunner {
 
 	override fun run(vararg args: String) {
 		saleRepo!!.save(Sale(
-				user = "user",
+				seller = "seller",
 				book = 1,
 				price = 300,
 				condition = "Visibly used"
 		))
 
 		saleRepo!!.save(Sale(
-				user = "user",
+				seller = "seller",
 				book = 2,
 				price = 1000,
 				condition = "New"
 		))
 
 		saleRepo!!.save(Sale(
-				user = "admin",
+				seller = "admin",
 				book = 1,
 				price = 700,
 				condition = "Barely used"
 		))
 
 		saleRepo!!.save(Sale(
-				user = "admin",
+				seller = "admin",
 				book = 3,
 				price = 0,
 				condition = "Poor"

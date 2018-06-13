@@ -37,7 +37,7 @@ class GameFlowIT {
 						//This will in itself act as a test for Gateway and Eureka
 						given().get("http://localhost/book-server/health").then().body("status", equalTo("UP"))
 						given().get("http://localhost/sale-server/health").then().body("status", equalTo("UP"))
-						given().get("http://localhost/user-server/health").then().body("status", equalTo("UP"))
+						given().get("http://localhost/seller-server/health").then().body("status", equalTo("UP"))
 						given().get("http://localhost/news-server/health").then().body("status", equalTo("UP"))
 						// need to make sure the data is created before running this tests
 						//given().get("http://localhost/quiz-server/quizzes").then().body("size()", equalTo(3))
@@ -78,7 +78,7 @@ class GameFlowIT {
 
 	@Test
 	fun authenticationTest() {
-		RestAssured.get("/user")
+		RestAssured.get("/seller")
 				.then()
 				.statusCode(200)
 
@@ -86,7 +86,7 @@ class GameFlowIT {
 				.then()
 				.statusCode(204)
 
-		RestAssured.get("/user")
+		RestAssured.get("/seller")
 				.then()
 				.statusCode(401)
 
@@ -105,7 +105,7 @@ class GameFlowIT {
 				.build()
 
 		RestAssured.given()
-				.get("/user") //TODO: AuthUser
+				.get("/seller") //TODO: AuthUser
 				.then()
 				.statusCode(200)
 

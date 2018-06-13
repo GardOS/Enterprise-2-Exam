@@ -1,24 +1,23 @@
 #saleServerPath: http://sale-server/sales #TODO: Bonus
 
-server:
-  port: 8083
-
 spring:
   application:
-    name: user-server
+    name: seller-server
   datasource:
-    url: "jdbc:h2:mem:"
-    driver-class-name: "org.h2.Driver"
+    url: "jdbc:postgresql://postgres-seller:5432/postgres"
+    username: "postgres"
+    password: ""
+    driver-class-name: "org.postgresql.Driver"
   jpa:
-    database: "h2"
+    database: "postgresql"
     hibernate:
-      ddl-auto: "create-drop"
+      ddl-auto: "update"
   rabbitmq:
-    host: localhost
+    host: rabbitmq
   session:
     store-type: redis
   redis:
-    host: localhost
+    host: redis
     port: 6379
 
 eureka:
@@ -28,7 +27,7 @@ eureka:
     healthcheck:
       enabled: true
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://eureka:8761/eureka/
 
 security:
   sessions: NEVER

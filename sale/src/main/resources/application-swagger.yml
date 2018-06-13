@@ -1,5 +1,5 @@
 bookServerPath: PlaceholderValue
-userServerPath: PlaceholderValue
+sellerServerPath: PlaceholderValue
 
 server:
   port: 8082

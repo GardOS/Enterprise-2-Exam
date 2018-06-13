@@ -8,7 +8,7 @@ import no.exam.sale.model.SaleConverter
 import no.exam.sale.model.SaleRepository
 import no.exam.schema.BookDto
 import no.exam.schema.SaleDto
-import no.exam.schema.UserDto
+import no.exam.schema.SellerDto
 import org.springframework.amqp.core.FanoutExchange
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.beans.factory.annotation.Autowired
@@ -56,8 +56,8 @@ class SaleController {
 	@Value("\${bookServerPath}")
 	private lateinit var bookServerPath: String
 
-	@Value("\${userServerPath}")
-	private lateinit var userServerPath: String
+	@Value("\${sellerServerPath}")
+	private lateinit var sellerServerPath: String
 
 	@ApiOperation("Get all sales")
 	@GetMapping
@@ -100,33 +100,33 @@ class SaleController {
 		return ResponseEntity.ok(SaleConverter.transform(sales))
 	}
 
-	@ApiOperation("Get all users that are currently selling books")
-	@GetMapping(path = ["/users"])
-	fun getAllUsersSellingBooks(): ResponseEntity<Any> {
-		//TODO: New user endpoint
+	@ApiOperation("Get all sellers that are currently selling books")
+	@GetMapping(path = ["/sellers"])
+	fun getAllSellersSellingBooks(): ResponseEntity<Any> {
+		//TODO: New seller endpoint
 		return ResponseEntity.status(204).build()
 	}
 
-	@ApiOperation("Get sales from a specific user")
-	@GetMapping(path = ["/users/{username}"])
-	fun getSalesForUser(
-			@ApiParam("Username of user")
+	@ApiOperation("Get sales from a specific seller")
+	@GetMapping(path = ["/sellers/{username}"])
+	fun getSalesForSeller(
+			@ApiParam("Username of seller")
 			@PathVariable("username")
 			pathId: String
 	): ResponseEntity<Any> {
-		val users = saleRepo.findByUser(pathId)
+		val sellers = saleRepo.findBySeller(pathId)
 
-		if (users.isEmpty())
+		if (sellers.isEmpty())
 			ResponseEntity.status(204)
 
-		return ResponseEntity.ok(SaleConverter.transform(users))
+		return ResponseEntity.ok(SaleConverter.transform(sellers))
 	}
 
 	//POST
 	@ApiOperation("Create new sale")
 	@PostMapping(consumes = [(MediaType.APPLICATION_JSON_VALUE)])
 	fun createSale(
-			@ApiParam("Sale dto. Should not specify id, nor user")
+			@ApiParam("Sale dto. Should not specify id, nor seller")
 			@RequestBody
 			dto: SaleDto,
 			principal: Principal
@@ -135,8 +135,8 @@ class SaleController {
 		if (dto.id != null)
 			return ResponseEntity.status(400).body("Id should not be specified")
 
-		if (dto.user != null)
-			return ResponseEntity.status(400).body("User should not be specified")
+		if (dto.seller != null)
+			return ResponseEntity.status(400).body("Seller should not be specified")
 
 
 		//Find book
@@ -148,10 +148,10 @@ class SaleController {
 					"$ex.responseBodyAsString")
 		}
 
-		//Find user
-		val user: UserDto
+		//Find seller
+		val seller: SellerDto
 		try {
-			user = restTemplate.getForObject("$userServerPath/${principal.name}", UserDto::class.java)
+			seller = restTemplate.getForObject("$sellerServerPath/${principal.name}", SellerDto::class.java)
 		} catch (ex: HttpClientErrorException) {
 			return ResponseEntity.status(ex.statusCode).body("Error when querying for Book:\n" +
 					"$ex.responseBodyAsString")
@@ -159,7 +159,7 @@ class SaleController {
 
 		val sale = saleRepo.save(
 				Sale(
-						user = user.username,
+						seller = seller.username,
 						book = book.id,
 						price = dto.price,
 						condition = dto.condition
@@ -179,7 +179,7 @@ class SaleController {
 			@ApiParam("Id of sale")
 			@PathVariable("id")
 			pathId: Long,
-			@ApiParam("Updated sale information. Id, User and book should not be included")
+			@ApiParam("Updated sale information. Id, seller and book should not be included")
 			@RequestBody
 			dto: SaleDto,
 			principal: Principal
@@ -187,13 +187,13 @@ class SaleController {
 		if (!saleRepo.exists(pathId))
 			return ResponseEntity.status(404).body("Sale with id: $pathId not found")
 
-		if (dto.id != null || dto.user != null || dto.book != null)
+		if (dto.id != null || dto.seller != null || dto.book != null)
 			return ResponseEntity.status(400).body("Field(s) not eligible for update")
 
 		val sale = saleRepo.findOne(pathId)
 
-		if (sale.user != principal.name)
-			return ResponseEntity.status(403).body("Mismatch between current user and owner of sale")
+		if (sale.seller != principal.name)
+			return ResponseEntity.status(403).body("Mismatch between current seller and owner of sale")
 
 		if (dto.price == sale.price && dto.condition == sale.condition)
 			return ResponseEntity.status(400).body("No change found")
@@ -225,8 +225,8 @@ class SaleController {
 
 		val sale = saleRepo.findOne(pathId)
 
-		if (sale.user != principal.name)
-			return ResponseEntity.status(403).body("Mismatch between current user and owner of sale")
+		if (sale.seller != principal.name)
+			return ResponseEntity.status(403).body("Mismatch between current seller and owner of sale")
 
 		saleRepo.delete(sale)
 

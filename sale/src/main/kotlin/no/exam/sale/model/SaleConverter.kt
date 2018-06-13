@@ -7,7 +7,7 @@ class SaleConverter {
 		fun transform(sale: Sale): SaleDto {
 			return SaleDto(
 					id = sale.id,
-					user = sale.user,
+					seller = sale.seller,
 					book = sale.book,
 					price = sale.price,
 					condition = sale.condition

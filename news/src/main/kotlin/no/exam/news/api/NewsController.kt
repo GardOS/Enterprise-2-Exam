@@ -54,7 +54,7 @@ class NewsController {
 			newsRepo.save(
 					News(
 							sale = sale.id,
-							sellerName = sale.user,
+							sellerName = sale.seller,
 							bookTitle = book.title,
 							bookPrice = sale.price,
 							bookCondition = sale.condition

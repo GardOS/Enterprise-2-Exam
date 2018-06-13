@@ -1,4 +1,4 @@
-package no.exam.user.config
+package no.exam.seller.config
 
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -8,7 +8,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 
 @Configuration
 @EnableWebSecurity
-class UserSecurityConfig : WebSecurityConfigurerAdapter() {
+class SellerSecurityConfig : WebSecurityConfigurerAdapter() {
 
 	override fun configure(http: HttpSecurity) {
 		http.httpBasic()

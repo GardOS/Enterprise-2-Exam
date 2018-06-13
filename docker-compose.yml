@@ -10,7 +10,7 @@ services:
     image: "postgres:10"
   postgres-news:
     image: "postgres:10"
-  postgres-user:
+  postgres-seller:
     image: "postgres:10"
 
   #Message queue
@@ -69,15 +69,15 @@ services:
       - postgres-sale
       - redis
       - rabbitmq
-  user-server:
+  seller-server:
     build:
-      context: user
+      context: seller
       dockerfile: Dockerfile
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     depends_on:
       - gateway
-      - postgres-user
+      - postgres-seller
       - redis
       - rabbitmq
   news-server:

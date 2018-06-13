@@ -153,7 +153,7 @@ class NewsApiTest {
 
 		val sale = SaleDto(
 				id = 1234,
-				user = "testUser",
+				seller = "testUser",
 				book = 1234,
 				price = defaultPrice,
 				condition = defaultBookCondition

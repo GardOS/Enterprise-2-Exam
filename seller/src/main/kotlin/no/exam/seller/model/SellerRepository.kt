@@ -1,7 +1,7 @@
-package no.exam.user.model
+package no.exam.seller.model
 
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface UserRepository : CrudRepository<User, String>
+interface SellerRepository : CrudRepository<Seller, String>

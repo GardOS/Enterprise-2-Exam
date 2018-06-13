@@ -49,7 +49,7 @@ class DocumentationProvider : SwaggerResourcesProvider {
 		resources.add(swaggerResource("gateway", "/v2/api-docs", "2.0"))
 		resources.add(swaggerResource("book-server", "/book-server/v2/api-docs", "2.0"))
 		resources.add(swaggerResource("sale-server", "/sale-server/v2/api-docs", "2.0"))
-		resources.add(swaggerResource("user-server", "/user-server/v2/api-docs", "2.0"))
+		resources.add(swaggerResource("seller-server", "/seller-server/v2/api-docs", "2.0"))
 		resources.add(swaggerResource("news-server", "/news-server/v2/api-docs", "2.0"))
 		return resources
 	}

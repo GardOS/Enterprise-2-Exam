@@ -1,11 +1,11 @@
-package no.exam.user.config
+package no.exam.seller.config
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import no.exam.user.model.User
-import no.exam.user.model.UserRepository
+import no.exam.seller.model.Seller
+import no.exam.seller.model.SellerRepository
 import org.springframework.amqp.core.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.CommandLineRunner
@@ -34,13 +34,13 @@ class UserApplicationConfig {
 				.apiInfo(apiInfo())
 				.select()
 				.paths(PathSelectors.any())
-				.apis(RequestHandlerSelectors.basePackage("no.exam.user"))
+				.apis(RequestHandlerSelectors.basePackage("no.exam.seller"))
 				.build()
 	}
 
 	private fun apiInfo(): ApiInfo {
 		return ApiInfoBuilder()
-				.title("REST API for interacting with the user")
+				.title("REST API for interacting with the seller")
 				.version("1.0")
 				.build()
 	}
@@ -113,20 +113,20 @@ class UserApplicationConfig {
 @Component
 internal class DataPreLoader : CommandLineRunner {
 	@Autowired
-	var userRepo: UserRepository? = null
+	var sellerRepo: SellerRepository? = null
 
 	override fun run(vararg args: String) {
-		userRepo!!.save(User(
+		sellerRepo!!.save(Seller(
 				username = "admin",
 				name = "admin name",
 				email = "admin@admin.com",
 				sales = mutableListOf(1, 2)
 		))
 
-		userRepo!!.save(User(
-				username = "user",
-				name = "user name",
-				email = "user@user.com",
+		sellerRepo!!.save(Seller(
+				username = "seller",
+				name = "seller name",
+				email = "seller@seller.com",
 				sales = mutableListOf(3, 4)
 		))
 	}

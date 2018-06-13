@@ -1,11 +1,11 @@
-package no.exam.user
+package no.exam.seller
 
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 
 @SpringBootApplication
-class UserApplication
+class SellerApplication
 
 fun main(args: Array<String>) {
-	SpringApplication.run(UserApplication::class.java, *args)
+	SpringApplication.run(SellerApplication::class.java, *args)
 }

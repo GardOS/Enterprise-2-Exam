@@ -119,7 +119,7 @@ class NewsApplicationConfig {
 		override fun run(vararg args: String) {
 			newsRepo!!.save(News(
 					sale = 1,
-					sellerName = "user name",
+					sellerName = "seller name",
 					bookTitle = "JavaScript: The Definitive Guide",
 					bookPrice = 300,
 					bookCondition = "Visibly used"
@@ -127,7 +127,7 @@ class NewsApplicationConfig {
 
 			newsRepo!!.save(News(
 					sale = 2,
-					sellerName = "user name",
+					sellerName = "seller name",
 					bookTitle = "JavaScript: The Good Parts",
 					bookPrice = 1000,
 					bookCondition = "New"

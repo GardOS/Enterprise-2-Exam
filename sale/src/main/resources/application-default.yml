@@ -1,5 +1,5 @@
 bookServerPath: http://book-server/books
-userServerPath: http://user-server/users
+sellerServerPath: http://seller-server/users
 
 server:
   port: 8082

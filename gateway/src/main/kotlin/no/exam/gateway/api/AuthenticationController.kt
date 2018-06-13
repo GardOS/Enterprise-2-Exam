@@ -2,7 +2,7 @@ package no.exam.gateway.api
 
 import io.swagger.annotations.Api
 import no.exam.gateway.model.AuthUserService
-import no.exam.schema.UserDto
+import no.exam.schema.SellerDto
 import org.springframework.amqp.core.FanoutExchange
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.beans.factory.annotation.Autowired
@@ -58,13 +58,13 @@ class AuthenticationController(
 		}
 
 		//TODO: validation?
-		val user = UserDto(
+		val seller = SellerDto(
 				username = username,
 				name = name,
 				email = email
 		)
 
-		rabbitTemplate.convertAndSend(fanout.name, "", user)
+		rabbitTemplate.convertAndSend(fanout.name, "", seller)
 
 		val userDetails = userDetailsService.loadUserByUsername(username)
 		val token = UsernamePasswordAuthenticationToken(userDetails, password, userDetails.authorities)

@@ -1,10 +1,10 @@
-package no.exam.user.model
+package no.exam.seller.model
 
 import javax.persistence.*
 import javax.validation.constraints.NotNull
 
 @Entity
-class User(
+class Seller(
 		@get:Id @get:Column(unique = true)
 		var username: String? = null,
 		@get:NotNull

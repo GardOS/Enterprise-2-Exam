@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository
 @Repository
 interface SaleRepository : CrudRepository<Sale, Long> {
 	fun findByBook(book: Long): List<Sale>
-	fun findByUser(user: String): List<Sale>
+	fun findBySeller(seller: String): List<Sale>
 }

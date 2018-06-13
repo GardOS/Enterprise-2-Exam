@@ -1,13 +1,13 @@
-package no.exam.user.api
+package no.exam.seller.api
 
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiParam
 import no.exam.schema.SaleDto
-import no.exam.schema.UserDto
-import no.exam.user.model.User
-import no.exam.user.model.UserConverter
-import no.exam.user.model.UserRepository
+import no.exam.schema.SellerDto
+import no.exam.seller.model.Seller
+import no.exam.seller.model.SellerConverter
+import no.exam.seller.model.SellerRepository
 import org.springframework.amqp.rabbit.annotation.RabbitListener
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataIntegrityViolationException
@@ -21,20 +21,20 @@ import javax.servlet.http.HttpServletResponse
 import org.hibernate.exception.ConstraintViolationException as HibernateConstraintViolationException
 import javax.validation.ConstraintViolationException as JavaxConstraintViolationException
 
-@Api(value = "/users", description = "API for users")
+@Api(value = "/sellers", description = "API for sellers")
 @RequestMapping(
-		path = ["/users"],
+		path = ["/sellers"],
 		produces = [(MediaType.APPLICATION_JSON_VALUE)]
 )
 @RestController
 @Validated
-class UserController {
+class SellerController {
 //  TODO: Bonus
 //  @Autowired
 //	private lateinit var restTemplate: RestTemplate
 
 	@Autowired
-	private lateinit var userRepo: UserRepository
+	private lateinit var sellerRepo: SellerRepository
 
 	//TODO: Bonus
 //	@Value("\${saleServerPath}")
@@ -42,13 +42,13 @@ class UserController {
 
 	//RABBIT
 	@RabbitListener(queues = ["#{userCreatedQueue.name}"])
-	fun userCreatedEvent(user: UserDto) {
+	fun userCreatedEvent(seller: SellerDto) {
 		try {
-			userRepo.save(
-					User(
-							username = user.username,
-							name = user.name,
-							email = user.email,
+			sellerRepo.save(
+					Seller(
+							username = seller.username,
+							name = seller.name,
+							email = seller.email,
 							sales = mutableListOf()
 					)
 			)
@@ -59,9 +59,9 @@ class UserController {
 	@RabbitListener(queues = ["#{saleCreatedQueue.name}"])
 	fun saleCreatedEvent(sale: SaleDto) {
 		try {
-			val user = userRepo.findOne(sale.user)
+			val user = sellerRepo.findOne(sale.seller)
 			user.sales!!.add(sale.id!!)
-			userRepo.save(user)
+			sellerRepo.save(user)
 		} catch (ex: Exception) {
 		}
 	}
@@ -69,49 +69,49 @@ class UserController {
 	@RabbitListener(queues = ["#{saleDeletedQueue.name}"])
 	fun saleDeletedEvent(sale: SaleDto) {
 		try {
-			val user = userRepo.findOne(sale.user)
+			val user = sellerRepo.findOne(sale.seller)
 			user.sales!!.remove(sale.id)
-			userRepo.save(user)
+			sellerRepo.save(user)
 		} catch (ex: Exception) {
 		}
 	}
 
-	@ApiOperation("Get all the users")
+	@ApiOperation("Get all the sellers")
 	@GetMapping
-	fun getAllUsers(): ResponseEntity<List<UserDto>> {
-		return ResponseEntity.ok(UserConverter.transform(userRepo.findAll()))
+	fun getAllSellers(): ResponseEntity<List<SellerDto>> {
+		return ResponseEntity.ok(SellerConverter.transform(sellerRepo.findAll()))
 	}
 
-	@ApiOperation("Get user by username")
+	@ApiOperation("Get seller by username")
 	@GetMapping(path = ["/{username}"])
-	fun getUserByUsername(
-			@ApiParam("Username of user")
+	fun getSellerByUsername(
+			@ApiParam("Username of seller")
 			@PathVariable("username")
 			pathId: String
 	): ResponseEntity<Any> {
-		if (!userRepo.exists(pathId))
+		if (!sellerRepo.exists(pathId))
 			return ResponseEntity.status(404).build()
 
-		val user = userRepo.findOne(pathId)
-		return ResponseEntity.ok(UserConverter.transform(user))
+		val user = sellerRepo.findOne(pathId)
+		return ResponseEntity.ok(SellerConverter.transform(user))
 	}
 
 	//TODO: Bonus feature
-//	@ApiOperation("Get all sales belonging to user by username")
+//	@ApiOperation("Get all sales belonging to seller by username")
 //	@GetMapping(path = ["/{username}/sales"])
 //	fun getAllSalesFromUser(
-//			@ApiParam("Username of user")
+//			@ApiParam("Username of seller")
 //			@PathVariable("username")
 //			pathId: String
 //	): ResponseEntity<Any> {
-//		if (!userRepo.exists(pathId))
+//		if (!sellerRepo.exists(pathId))
 //			return ResponseEntity.status(404).build()
 //
 //		val sales : Array<SaleDto>
 //		try {
-//			sales = restTemplate.getForObject("$saleServerPath/users/$pathId", Array<SaleDto>::class.java)
+//			sales = restTemplate.getForObject("$saleServerPath/sellers/$pathId", Array<SaleDto>::class.java)
 //		} catch (ex: HttpClientErrorException) {
-//			return ResponseEntity.status(ex.statusCode).body("Error when querying for User:\n" +
+//			return ResponseEntity.status(ex.statusCode).body("Error when querying for Seller:\n" +
 //					"$ex.responseBodyAsString")
 //		}
 //

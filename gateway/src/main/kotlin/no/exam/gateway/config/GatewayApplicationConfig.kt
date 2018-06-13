@@ -35,7 +35,7 @@ class GatewayApplicationConfig {
 	//User created MQ message
 	@Bean
 	fun fanout(): FanoutExchange {
-		return FanoutExchange("user-created")
+		return FanoutExchange("seller-created")
 	}
 }
 

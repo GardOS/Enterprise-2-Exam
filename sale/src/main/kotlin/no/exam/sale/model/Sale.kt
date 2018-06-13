@@ -10,7 +10,7 @@ class Sale(
 		@get:Id @get:GeneratedValue
 		var id: Long? = null,
 		@get:NotNull
-		var user: String? = null,
+		var seller: String? = null,
 		@get:NotNull
 		var book: Long? = null,
 		@get:NotNull

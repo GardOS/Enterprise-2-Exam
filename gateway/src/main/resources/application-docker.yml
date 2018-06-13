@@ -15,8 +15,8 @@ zuul:
       path: /book-server/**
     sale-server:
       path: /sale-server/**
-    user-server:
-      path: /user-server/**
+    seller-server:
+      path: /seller-server/**
     news-server:
       path: /news-server/**
   sensitive-headers:

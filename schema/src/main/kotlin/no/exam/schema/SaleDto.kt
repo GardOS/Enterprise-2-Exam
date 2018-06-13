@@ -9,8 +9,8 @@ data class SaleDto(
 		@ApiModelProperty("Id of the sale")
 		var id: Long? = null,
 
-		@ApiModelProperty("Reference to user that is selling")
-		var user: String? = null,
+		@ApiModelProperty("Reference to seller that is selling")
+		var seller: String? = null,
 
 		@ApiModelProperty("Reference to book that is being sold")
 		var book: Long? = null,

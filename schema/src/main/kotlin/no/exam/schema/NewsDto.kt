@@ -9,7 +9,7 @@ data class NewsDto(
 		@ApiModelProperty("Reference to sale that triggered the news")
 		var sale: Long? = null,
 
-		@ApiModelProperty("Name of the user that is selling the book")
+		@ApiModelProperty("Name of the seller that is selling the book")
 		var sellerName: String? = null,
 
 		@ApiModelProperty("Title of the book")

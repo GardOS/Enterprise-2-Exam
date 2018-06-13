@@ -1,12 +1,12 @@
-package no.exam.user
+package no.exam.seller
 
 import io.restassured.RestAssured
 import io.restassured.RestAssured.get
 import no.exam.schema.SaleDto
-import no.exam.schema.UserDto
-import no.exam.user.model.User
-import no.exam.user.model.UserConverter
-import no.exam.user.model.UserRepository
+import no.exam.schema.SellerDto
+import no.exam.seller.model.Seller
+import no.exam.seller.model.SellerConverter
+import no.exam.seller.model.SellerRepository
 import org.awaitility.Awaitility.await
 import org.awaitility.Duration
 import org.hamcrest.Matchers.equalTo
@@ -31,10 +31,10 @@ import org.testcontainers.containers.GenericContainer
 import java.util.concurrent.TimeUnit
 
 @RunWith(SpringRunner::class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = [(UserApplication::class)])
-@ContextConfiguration(initializers = [(UserApiTest.Companion.Initializer::class)])
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = [(SellerApplication::class)])
+@ContextConfiguration(initializers = [(SellerApiTest.Companion.Initializer::class)])
 @ActiveProfiles("test")
-class UserApiTest {
+class SellerApiTest {
 
 	companion object {
 		class KGenericContainer(imageName: String) : GenericContainer<KGenericContainer>(imageName)
@@ -58,7 +58,7 @@ class UserApiTest {
 		@JvmStatic
 		fun initClass() {
 			RestAssured.baseURI = "http://localhost"
-			RestAssured.basePath = "/users"
+			RestAssured.basePath = "/sellers"
 			RestAssured.enableLoggingOfRequestAndResponseIfValidationFails()
 		}
 	}
@@ -67,9 +67,9 @@ class UserApiTest {
 	fun init() {
 		RestAssured.port = port
 
-		userRepo.deleteAll()
-		testUser = userRepo.save(
-				User(
+		sellerRepo.deleteAll()
+		testSeller = sellerRepo.save(
+				Seller(
 						username = defaultUsername,
 						name = defaultName,
 						email = defaultEmail,
@@ -82,7 +82,7 @@ class UserApiTest {
 	protected var port = 0
 
 	@Autowired
-	protected lateinit var userRepo: UserRepository
+	protected lateinit var sellerRepo: SellerRepository
 
 	@Autowired
 	private lateinit var rabbitTemplate: RabbitTemplate
@@ -96,20 +96,20 @@ class UserApiTest {
 	@Autowired
 	private lateinit var saleDeletedFanout: FanoutExchange
 
-	var testUser: User? = null
+	var testSeller: Seller? = null
 	val defaultUsername: String = "defaultUsername"
 	val defaultName: String = "defaultName"
 	val defaultEmail: String = "defaultEmail@email.com"
 
 	@Test
-	fun getAllUsers_receivesMultiple() {
+	fun getAllSellers_receivesMultiple() {
 		get().then()
 				.body("size()", equalTo(1))
 				.statusCode(200)
 
-		testUser!!.username = "newUsername"
+		testSeller!!.username = "newUsername"
 
-		userRepo.save(testUser)
+		sellerRepo.save(testSeller)
 
 		get().then()
 				.body("size()", equalTo(2))
@@ -117,32 +117,32 @@ class UserApiTest {
 	}
 
 	@Test
-	fun getUserByUsername_receivesUser() {
-		val user = get("/${testUser!!.username}")
+	fun getSellerByUsername_receivesUser() {
+		val seller = get("/${testSeller!!.username}")
 				.then()
 				.statusCode(200)
 				.extract()
 				.body()
-				.`as`(UserDto::class.java)
+				.`as`(SellerDto::class.java)
 
-		assertEquals(testUser!!.name, user.name)
+		assertEquals(testSeller!!.name, seller.name)
 	}
 
 	@Test
-	fun userCreatedEvent_UserCreated() {
-		userRepo.delete(testUser)
+	fun sellerCreatedEvent_UserCreated() {
+		sellerRepo.delete(testSeller)
 
-		testUser!!.sales = null //Fails to serialize with mutableList
+		testSeller!!.sales = null //Fails to serialize with mutableList
 
-		val userDto = UserConverter.transform(testUser!!)
+		val sellerDto = SellerConverter.transform(testSeller!!)
 
-		rabbitTemplate.convertAndSend(userCreatedFanout.name, "", userDto)
+		rabbitTemplate.convertAndSend(userCreatedFanout.name, "", sellerDto)
 
 		await().atMost(5, TimeUnit.SECONDS)
 				.pollInterval(Duration.ONE_SECOND)
 				.ignoreExceptions()
 				.until({
-					assertEquals(1, userRepo.count())
+					assertEquals(1, sellerRepo.count())
 					true
 				})
 
@@ -150,11 +150,11 @@ class UserApiTest {
 
 	@Test
 	fun saleCreatedEvent_SaleAdded() {
-		assertEquals(2, testUser!!.sales!!.size)
+		assertEquals(2, testSeller!!.sales!!.size)
 
 		val sale = SaleDto(
 				id = 3,
-				user = defaultUsername,
+				seller = defaultUsername,
 				book = 1234,
 				price = 1234,
 				condition = "condition"
@@ -166,7 +166,7 @@ class UserApiTest {
 				.pollInterval(Duration.ONE_SECOND)
 				.ignoreExceptions()
 				.until({
-					assertEquals(3, userRepo.findOne(testUser!!.username).sales!!.size)
+					assertEquals(3, sellerRepo.findOne(testSeller!!.username).sales!!.size)
 					true
 				})
 
@@ -174,11 +174,11 @@ class UserApiTest {
 
 	@Test
 	fun saleDeletedEvent_SaleRemoved() {
-		assertEquals(2, testUser!!.sales!!.size)
+		assertEquals(2, testSeller!!.sales!!.size)
 
 		val sale = SaleDto(
 				id = 2,
-				user = defaultUsername,
+				seller = defaultUsername,
 				book = 1234,
 				price = 1234,
 				condition = "condition"
@@ -190,7 +190,7 @@ class UserApiTest {
 				.pollInterval(Duration.ONE_SECOND)
 				.ignoreExceptions()
 				.until({
-					assertEquals(1, userRepo.findOne(testUser!!.username).sales!!.size)
+					assertEquals(1, sellerRepo.findOne(testSeller!!.username).sales!!.size)
 					true
 				})
 

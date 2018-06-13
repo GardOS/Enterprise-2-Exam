@@ -1,5 +1,5 @@
 bookServerPath: http://localhost:8099/books
-userServerPath: http://localhost:8099/users
+sellerServerPath: http://localhost:8099/sellers
 
 spring:
   session:
