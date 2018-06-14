@@ -34,8 +34,6 @@ services:
     build:
       context: eureka
       dockerfile: Dockerfile
-    ports:
-      - "8761:8761" #TODO: remove
     environment:
       - SPRING_PROFILES_ACTIVE=docker
   book-server_0:
