@@ -52,7 +52,7 @@ Sale    | sale-deleted | seller, news
 
 ![Diagram](./Exam.png)  
 
-#### Req
+#### Requirements
 Since I have used a bit different approach than perhaps what was intended, some requirements might be in the gray area. 
 Therefore I am listing the requirements and how I resolved them, wherever I fear there might be a possibility for 
 misunderstanding
@@ -82,16 +82,57 @@ If not wanted, they can be run by themselves in these classes with these endpoin
     * <http://localhost:8084/swagger-ui.html>
 
 #### Running/Testing
-* Test format: Method_ExpectedResult
-* e2e mostly use preloaded data. Found in applicationConfig.kt
+Requirements: 
+- Docker is running
+- Exposed daemon on TCP without TLS in Docker settings
+- Increase allocated memory to Docker (I used 8gb)
 
-e2e crash ref:
-https://github.com/docker/for-win/issues/2007
-https://github.com/docker/for-win/issues/1723
-https://github.com/docker/for-win/issues/1563
-https://www.reddit.com/r/docker/comments/815l9n/docker_for_windows_wont_start_if_razer_synapse_3/
+##### Running:
+1. `mvn clean install -DskipTests`
+2. `docker-compose up --build`
+3. Wait for a while for containers to run and register
+4. When done: `docker-compose down` 
+
+##### Testing:
+`mvn clean verify`
+
+**If tests fail:**
+
+From personal experience I have had a lot of problems with docker/testcontainers being very unstable, especially when 
+run from maven. If it fails, its normally when when pulling the images, the process will crash and the docker-engine will be 
+broken. This seems to be caused by different processes trying to use the same global variable in the OS, I personally 
+had a driver for my mouse that do this (see ref.). After disabling the driver it improved a lot, but 
+the success rate is still not 100%. Please keep this in mind.
+
+If `mvn clean verify` fails, I urge you to try again with a different state.
+Some steps i found useful:
+* Restart computer
+* Shut down processes that could interfere with the tests 
+*  `docker system prune -a` (deletes all local images)
+* Run test manually from IDE 
+* Use different computer
+* All of the above
+
+Docker crash ref:
+* https://github.com/docker/for-win/issues/2007
+* https://github.com/docker/for-win/issues/1723
+* https://github.com/docker/for-win/issues/1563
+* https://www.reddit.com/r/docker/comments/815l9n/docker_for_windows_wont_start_if_razer_synapse_3/
+
+**Note:**
+A lot of the tests is based on preloaded data. Initialization happens in the ApplicationConfig classes.
 
 #### Further
-Book should update news
-If sale is updated, the news should reorder the sale to seen as latest
+Because of time limitation, some shortcuts has been made. Below is what further development would have involved:
+* Frontend
+* Bug fixes. Big scale and little time means a lot of unverified bugs
+* Whenever a book is updated, the news should reflect the change
+* If a sale is updated, the latest news should put the changed sale on top
+* More constraints on entity, string length etc.
+* Better validation of input in API
+* Better responses from API
+* Improve code quality
+* More API endpoints
+* Better test coverage, more unit tests per endpoint
+
 
