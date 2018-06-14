@@ -114,12 +114,39 @@ class SaleController {
 			@PathVariable("username")
 			pathId: String
 	): ResponseEntity<Any> {
-		val sellers = saleRepo.findBySeller(pathId)
+		val sales = saleRepo.findBySeller(pathId)
 
-		if (sellers.isEmpty())
-			ResponseEntity.status(204)
+		if (sales.isEmpty())
+			return ResponseEntity.status(204).build()
 
-		return ResponseEntity.ok(SaleConverter.transform(sellers))
+		return ResponseEntity.ok(SaleConverter.transform(sales))
+	}
+
+	@ApiOperation("Get a specific book from a specific seller")
+	@GetMapping(path = ["/sellers/{username}/books/{bookId}"])
+	fun getBookFromSeller(
+			@ApiParam("Username of seller")
+			@PathVariable("username")
+			username: String,
+			@ApiParam("Id of book")
+			@PathVariable("bookId")
+			bookId: Long
+	): ResponseEntity<Any> {
+		val sales = saleRepo.findBySeller(username)
+
+		for (sale in sales){
+			if(sale.book == bookId){
+				val book: BookDto
+				return try {
+					book = restTemplate.getForObject("$bookServerPath/$bookId", BookDto::class.java)
+					ResponseEntity.status(200).body(book)
+				} catch (ex: HttpClientErrorException) {
+					ResponseEntity.status(ex.statusCode).body("Error when querying for Book:\n" +
+							"$ex.responseBodyAsString")
+				}
+			}
+		}
+		return ResponseEntity.status(404).build()
 	}
 
 	//POST

@@ -10,6 +10,7 @@ import io.restassured.RestAssured.get
 import io.restassured.http.ContentType
 import no.exam.sale.model.Sale
 import no.exam.sale.model.SaleRepository
+import no.exam.schema.BookDto
 import no.exam.schema.SaleDto
 import org.hamcrest.Matchers.equalTo
 import org.junit.*
@@ -111,7 +112,7 @@ class SaleApiTest {
 
 	fun mockBookJsonString(): String{
 		return """{
-			|"id":1,
+			|"id":1234,
 			|"title":"JavaScript: The Definitive Guide",
 			|"author":"David Flanagan",
 			|"edition":"6th Edition"
@@ -182,6 +183,27 @@ class SaleApiTest {
 		get("sellers/newUser").then()
 				.body("size()", equalTo(1))
 				.statusCode(200)
+	}
+
+	@Test
+	fun getBookFromSeller_SellerHasBook() {
+
+
+		wireMockServer.stubFor(
+				WireMock.get(
+						WireMock.urlMatching("/books/.*"))
+						.willReturn(WireMock.aResponse()
+								.withHeader("Content-Type", "application/json")
+								.withBody(mockBookJsonString())))
+
+		val book = get("/sellers/$defaultSeller/books/$defaultBook")
+				.then()
+				.statusCode(200)
+				.extract()
+				.body()
+				.`as`(BookDto::class.java)
+
+		assertEquals(defaultBook, book.id)
 	}
 
 	@Test
