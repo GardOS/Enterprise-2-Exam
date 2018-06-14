@@ -135,6 +135,8 @@ Because of time limitation, some shortcuts has been made. Below is what further 
 * If a sale is updated, the latest news should put the changed sale on top
 * RabbitMQ container is being initialized in Sale tests. The only reason is so that it wont crash when publishing 
 message. That needs to be fixed.
+* Fix that there is a login popup when looking at gateway swagger-ui, even though the endpoint is enabled in the 
+securityConfig. The page works fine and the popup can be blocked, you can also log in and it will disappear.
 * More constraints on entity, string length etc.
 * Better validation of input in API
 * Better responses from API
