@@ -187,23 +187,14 @@ class SaleApiTest {
 
 	@Test
 	fun getBookFromSeller_SellerHasBook() {
-
-
-		wireMockServer.stubFor(
-				WireMock.get(
-						WireMock.urlMatching("/books/.*"))
-						.willReturn(WireMock.aResponse()
-								.withHeader("Content-Type", "application/json")
-								.withBody(mockBookJsonString())))
-
-		val book = get("/sellers/$defaultSeller/books/$defaultBook")
+		val sale = get("/sellers/$defaultSeller/books/$defaultBook")
 				.then()
 				.statusCode(200)
 				.extract()
 				.body()
-				.`as`(BookDto::class.java)
+				.`as`(SaleDto::class.java)
 
-		assertEquals(defaultBook, book.id)
+		assertEquals(defaultBook, sale.book)
 	}
 
 	@Test

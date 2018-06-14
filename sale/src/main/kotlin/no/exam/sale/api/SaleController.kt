@@ -136,14 +136,7 @@ class SaleController {
 
 		for (sale in sales){
 			if(sale.book == bookId){
-				val book: BookDto
-				return try {
-					book = restTemplate.getForObject("$bookServerPath/$bookId", BookDto::class.java)
-					ResponseEntity.status(200).body(book)
-				} catch (ex: HttpClientErrorException) {
-					ResponseEntity.status(ex.statusCode).body("Error when querying for Book:\n" +
-							"$ex.responseBodyAsString")
-				}
+				return ResponseEntity.status(200).body(SaleConverter.transform(sale))
 			}
 		}
 		return ResponseEntity.status(404).build()
