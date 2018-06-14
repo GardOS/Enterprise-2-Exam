@@ -110,11 +110,11 @@ class NewsController {
 		for (i in 0..4) { //Iterate 5 times max, since it might have infinite depth
 			if (cause is JavaxConstraintViolationException || cause is HibernateConstraintViolationException) {
 				response.status = HttpStatus.BAD_REQUEST.value()
-				return "Invalid request. Error:\n${ex.message ?: "Error not found"}"
+				return "Invalid request"
 			}
 			cause = cause?.cause
 		}
 		response.status = HttpStatus.INTERNAL_SERVER_ERROR.value()
-		return "Something went wrong processing the request.  Error:\n${ex.message ?: "Error not found"}"
+		return "Something went wrong processing the request"
 	}
 }

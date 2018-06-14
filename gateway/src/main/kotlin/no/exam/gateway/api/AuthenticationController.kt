@@ -6,6 +6,8 @@ import no.exam.schema.SellerDto
 import org.springframework.amqp.core.FanoutExchange
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.dao.DataIntegrityViolationException
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.AuthenticationManager
@@ -14,13 +16,14 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.core.authority.AuthorityUtils
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetailsService
+import org.springframework.transaction.TransactionSystemException
 import org.springframework.validation.annotation.Validated
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.ModelAttribute
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import java.security.Principal
+import javax.servlet.http.HttpServletResponse
 import javax.servlet.http.HttpSession
+import org.hibernate.exception.ConstraintViolationException as HibernateConstraintViolationException
+import javax.validation.ConstraintViolationException as JavaxConstraintViolationException
 
 @Api(description = "API for authentication")
 @RestController
@@ -57,7 +60,6 @@ class AuthenticationController(
 			return ResponseEntity.status(400).build()
 		}
 
-		//TODO: validation?
 		val seller = SellerDto(
 				username = username,
 				name = name,
@@ -101,5 +103,21 @@ class AuthenticationController(
 		}
 
 		return ResponseEntity.status(204).build()
+	}
+
+	//Catches validation errors and returns error status based on error
+	@ExceptionHandler(value = ([JavaxConstraintViolationException::class, HibernateConstraintViolationException::class,
+		DataIntegrityViolationException::class, TransactionSystemException::class]))
+	fun handleValidationFailure(ex: Exception, response: HttpServletResponse): String {
+		var cause: Throwable? = ex
+		for (i in 0..4) { //Iterate 5 times max, since it might have infinite depth
+			if (cause is JavaxConstraintViolationException || cause is HibernateConstraintViolationException) {
+				response.status = HttpStatus.BAD_REQUEST.value()
+				return "Invalid request"
+			}
+			cause = cause?.cause
+		}
+		response.status = HttpStatus.INTERNAL_SERVER_ERROR.value()
+		return "Something went wrong processing the request"
 	}
 }

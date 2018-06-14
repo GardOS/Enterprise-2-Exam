@@ -99,10 +99,15 @@ Requirements:
 **If tests fail:**
 
 From personal experience I have had a lot of problems with docker/testcontainers being very unstable, especially when 
-run from maven. If it fails, its normally when when pulling the images, the process will crash and the docker-engine will be 
+run from maven. If it fails, its normally when pulling the images, the process will crash and the docker-engine will be 
 broken. This seems to be caused by different processes trying to use the same global variable in the OS, I personally 
 had a driver for my mouse that do this (see ref.). After disabling the driver it improved a lot, but 
-the success rate is still not 100%. Please keep this in mind.
+the success rate is still not 100%.
+
+Other cases with instability in tests include error where there are "No instances available" and general 
+ZuulException.
+
+Please keep this in mind.
 
 If `mvn clean verify` fails, I urge you to try again with a different state.
 Some steps i found useful:
@@ -128,6 +133,8 @@ Because of time limitation, some shortcuts has been made. Below is what further 
 * Bug fixes. Big scale and little time means a lot of unverified bugs
 * Whenever a book is updated, the news should reflect the change
 * If a sale is updated, the latest news should put the changed sale on top
+* RabbitMQ container is being initialized in Sale tests. The only reason is so that it wont crash when publishing 
+message. That needs to be fixed.
 * More constraints on entity, string length etc.
 * Better validation of input in API
 * Better responses from API

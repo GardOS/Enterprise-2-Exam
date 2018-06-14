@@ -78,13 +78,6 @@ class SaleController {
 		return ResponseEntity.ok(SaleConverter.transform(sale))
 	}
 
-	@ApiOperation("Get all books that are for sale")
-	@GetMapping(path = ["/books"])
-	fun getAllBooksOnSale(): ResponseEntity<Any> {
-		//TODO: New book endpoint
-		return ResponseEntity.status(204).build()
-	}
-
 	@ApiOperation("Get sales on a specific book")
 	@GetMapping(path = ["/books/{id}"])
 	fun getSalesForBook(
@@ -98,13 +91,6 @@ class SaleController {
 			ResponseEntity.status(204)
 
 		return ResponseEntity.ok(SaleConverter.transform(sales))
-	}
-
-	@ApiOperation("Get all sellers that are currently selling books")
-	@GetMapping(path = ["/sellers"])
-	fun getAllSellersSellingBooks(): ResponseEntity<Any> {
-		//TODO: New seller endpoint
-		return ResponseEntity.status(204).build()
 	}
 
 	@ApiOperation("Get sales from a specific seller")
@@ -165,7 +151,7 @@ class SaleController {
 			book = restTemplate.getForObject("$bookServerPath/${dto.book}", BookDto::class.java)
 		} catch (ex: HttpClientErrorException) {
 			return ResponseEntity.status(ex.statusCode).body("Error when querying for Book:\n" +
-					"$ex.responseBodyAsString")
+					"$ex.responseBodyAsString \n\n ${ex.printStackTrace()} \n\n${ex.message}")
 		}
 
 		//Find seller
@@ -173,7 +159,7 @@ class SaleController {
 		try {
 			seller = restTemplate.getForObject("$sellerServerPath/${principal.name}", SellerDto::class.java)
 		} catch (ex: HttpClientErrorException) {
-			return ResponseEntity.status(ex.statusCode).body("Error when querying for Book:\n" +
+			return ResponseEntity.status(ex.statusCode).body("Error when querying for Seller:\n" +
 					"$ex.responseBodyAsString")
 		}
 
@@ -263,11 +249,11 @@ class SaleController {
 		for (i in 0..4) { //Iterate 5 times max, since it might have infinite depth
 			if (cause is JavaxConstraintViolationException || cause is HibernateConstraintViolationException) {
 				response.status = HttpStatus.BAD_REQUEST.value()
-				return "Invalid request. Error:\n${ex.message ?: "Error not found"}"
+				return "Invalid request"
 			}
 			cause = cause?.cause
 		}
 		response.status = HttpStatus.INTERNAL_SERVER_ERROR.value()
-		return "Something went wrong processing the request.  Error:\n${ex.message ?: "Error not found"}"
+		return "Something went wrong processing the request"
 	}
 }

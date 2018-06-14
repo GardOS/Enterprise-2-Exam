@@ -26,8 +26,7 @@ class GatewaySecurityConfig(
 	}
 
 	override fun configure(http: HttpSecurity) {
-		http.antMatcher("/swagger-ui.html") //Avoid httpBasic popup login
-				.httpBasic()
+		http.httpBasic()
 				.and()
 				.logout()
 				.and()

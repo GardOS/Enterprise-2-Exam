@@ -32,14 +32,12 @@ class BookController {
 	@Autowired
 	private lateinit var bookRepo: BookRepository
 
-	//GET ALL
 	@ApiOperation("Get all books")
 	@GetMapping
 	fun getAllBooks(): ResponseEntity<List<BookDto>> {
 		return ResponseEntity.ok(BookConverter.transform(bookRepo.findAll()))
 	}
 
-	//GET ONE
 	@ApiOperation("Get book by id")
 	@GetMapping(path = ["/{id}"])
 	fun getBook(
@@ -53,7 +51,6 @@ class BookController {
 		return ResponseEntity.ok(BookConverter.transform(book))
 	}
 
-	//POST
 	@ApiOperation("Create new book")
 	@PostMapping(consumes = [(MediaType.APPLICATION_JSON_VALUE)])
 	fun createBook(
@@ -77,8 +74,6 @@ class BookController {
 		return ResponseEntity.status(201).build()
 	}
 
-	//PUT
-	@ApiOperation("Replace a book. If not found: Ignores Id and creates using auto-increment ")
 	@PutMapping(consumes = [MediaType.APPLICATION_JSON_VALUE])
 	fun replaceBook(
 			@ApiParam("The new book which will replace the old one")
@@ -99,7 +94,6 @@ class BookController {
 		return ResponseEntity.status(status).build()
 	}
 
-	//PATCH
 	@ApiOperation("Update an existing book")
 	@PatchMapping(path = ["/{id}"], consumes = [MediaType.APPLICATION_JSON_VALUE])
 	fun updateBook(
@@ -158,7 +152,6 @@ class BookController {
 		return ResponseEntity.status(204).build()
 	}
 
-	//DELETE
 	@ApiOperation("Delete existing book")
 	@DeleteMapping(path = ["/{id}"])
 	fun deleteBook(
@@ -182,12 +175,11 @@ class BookController {
 		for (i in 0..4) { //Iterate 5 times max, since it might have infinite depth
 			if (cause is JavaxConstraintViolationException || cause is HibernateConstraintViolationException) {
 				response.status = HttpStatus.BAD_REQUEST.value()
-				return "Invalid request. Error:\n${ex.message ?: "Error not found"}" //TODO: Remove ex.message
+				return "Invalid request"
 			}
 			cause = cause?.cause
 		}
 		response.status = HttpStatus.INTERNAL_SERVER_ERROR.value()
-		return "Something went wrong processing the request.  Error:\n${ex.message
-				?: "Error not found"}" //TODO: Remove ex.message
+		return "Something went wrong processing the request"
 	}
 }

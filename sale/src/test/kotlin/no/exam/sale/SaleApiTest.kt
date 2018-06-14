@@ -35,7 +35,7 @@ import org.testcontainers.containers.GenericContainer
 class SaleApiTest {
 
 	companion object {
-		//Only reason this is included is to avoid crash when sending MQ messages FIXME
+		//Only reason this is included is to avoid crash when sending MQ messages. Should be fixed
 		class KGenericContainer(imageName: String) : GenericContainer<KGenericContainer>(imageName)
 
 		@ClassRule
@@ -63,7 +63,6 @@ class SaleApiTest {
 			RestAssured.enableLoggingOfRequestAndResponseIfValidationFails()
 			RestAssured.authentication = RestAssured.basic("testUser", "pwd")
 
-			//TODO: Remember port overlap
 			wireMockServer = WireMockServer(WireMockConfiguration.wireMockConfig().port(8099)
 					.notifier(ConsoleNotifier(true)))
 			wireMockServer.start()

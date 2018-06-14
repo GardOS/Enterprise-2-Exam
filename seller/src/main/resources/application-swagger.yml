@@ -1,5 +1,3 @@
-#saleServerPath: PlaceholderValue #TODO: Bonus
-
 server:
   port: 8083
 

@@ -59,6 +59,9 @@ internal class DataPreLoader : CommandLineRunner {
 	var bookRepo: BookRepository? = null
 
 	override fun run(vararg args: String) {
+		if(bookRepo!!.count() > 0)
+			return
+
 		bookRepo!!.save(Book(
 				title = "JavaScript: The Definitive Guide",
 				author = "David Flanagan",

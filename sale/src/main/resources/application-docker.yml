@@ -1,5 +1,5 @@
 bookServerPath: http://book-server/books
-sellerServerPath: http://seller-server/users
+sellerServerPath: http://seller-server/sellers
 
 spring:
   application:

@@ -59,7 +59,6 @@ class BookApiTest {
 	val defaultAuthor: String = "DefaultAuthor"
 	val defaultEdition: String = "DefaultEdition"
 
-	//GET ALL
 	@Test
 	fun getAllBooks_receivesMultiple() {
 		get().then()
@@ -79,7 +78,6 @@ class BookApiTest {
 				.statusCode(200)
 	}
 
-	//GET ONE
 	@Test
 	fun getBook_receivesBook() {
 		val book = get("/${testBook?.id}")
@@ -92,7 +90,6 @@ class BookApiTest {
 		assertEquals(testBook!!.title, book.title)
 	}
 
-	//POST
 	@Test
 	fun createBook_bookCreated() {
 		assertEquals(1, bookRepo.count())
@@ -112,7 +109,6 @@ class BookApiTest {
 		assertEquals(2, bookRepo.count())
 	}
 
-	//PUT
 	@Test
 	fun replaceBook_bookUpdated() {
 		assertEquals(defaultTitle, bookRepo.findOne(testBook!!.id).title)
@@ -147,7 +143,6 @@ class BookApiTest {
 				.statusCode(201)
 	}
 
-	//PATCH
 	@Test
 	fun updateBook_fieldsChanged() {
 		assertEquals(defaultTitle, bookRepo.findOne(testBook!!.id).title)
@@ -214,7 +209,6 @@ class BookApiTest {
 		assertEquals(defaultEdition, bookRepo.findOne(testBook!!.id).edition)
 	}
 
-	//DELETE
 	@Test
 	fun deleteBook_bookDeleted() {
 		assertEquals(1, bookRepo.count())
