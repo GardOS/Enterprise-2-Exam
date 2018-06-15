@@ -1,6 +1,10 @@
 # Exam
+This repository is my delivery of the 72h home exam in the subject PG6100 Enterpriseprogramming 2.
+"Curriculum" and code inspiration can be found in Andrea Arcuri's (lecturer) repository found [here.](https://github.com/arcuri82/testing_security_development_enterprise_systems)
 
-## About:
+Exam text can be found [here.](pg6100_exam_continuation_18.pdf)
+
+## About
 This application represents the backend of a used books trading site.
 It contains the following modules with the following functionality:
 
@@ -68,7 +72,7 @@ misunderstanding
  but not edit them. However, the user can edit the sale entity so that price and condition can be updated.
 
 #### Swagger
-After booting all applications, they can all be reached at the same time from gateway @ <localhost:8080/swagger-ui.html>
+After booting all applications, they can all be reached at the same time from gateway @ <http://localhost:8080/swagger-ui.html>
 If not wanted, they can be run by themselves in these classes with these endpoints:
   * GatewayApplication 
     * <http://localhost:8080/swagger-ui.html>
